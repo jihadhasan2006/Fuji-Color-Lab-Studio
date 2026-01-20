@@ -3,158 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্টুডিও ম্যানেজার - ফুল অটোমেশন</title>
+    <title>স্টুডিও অনলাইন ম্যানেজার (৩ পিসি)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        :root {
-            --bg-main: #F8F6F2;
-            --bg-sidebar: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --text-primary: #3E3229;
-            --text-secondary: #8D8179;
-            --accent-brown: #5B4A42;
-            --accent-gold: #C69C6D;
-            --success: #27ae60;
-            --danger: #e74c3c;
-            --shadow-soft: 0 5px 20px rgba(62, 50, 41, 0.05);
-            --border-radius-card: 16px;
-        }
-
+        /* আগের সব CSS স্টাইল হুবহু একই থাকবে */
+        :root { --bg-main: #F8F6F2; --bg-sidebar: #FFFFFF; --bg-card: #FFFFFF; --text-primary: #3E3229; --text-secondary: #8D8179; --accent-brown: #5B4A42; --accent-gold: #C69C6D; --success: #27ae60; --danger: #e74c3c; --shadow-soft: 0 5px 20px rgba(62, 50, 41, 0.05); --border-radius-card: 16px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; }
-        
-        /* সাইডবার */
-        .sidebar {
-            position: fixed; left: -260px; top: 0; height: 100%; width: 260px;
-            background: var(--bg-sidebar); padding: 25px; z-index: 1000;
-            border-right: 1px solid #eee; transition: 0.3s ease-in-out;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
+        .sidebar { position: fixed; left: -260px; top: 0; height: 100%; width: 260px; background: var(--bg-sidebar); padding: 25px; z-index: 1000; border-right: 1px solid #eee; transition: 0.3s ease-in-out; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
         .sidebar.active { left: 0; }
-
-        .brand {
-            font-size: 22px; font-weight: 700; color: var(--text-primary);
-            margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;
-        }
+        .brand { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
         .close-sidebar { cursor: pointer; font-size: 20px; color: var(--danger); display: none; }
-        
-        .menu-link {
-            display: flex; align-items: center; padding: 12px 15px;
-            color: var(--text-secondary); text-decoration: none;
-            margin-bottom: 8px; border-radius: 12px; transition: 0.3s; font-weight: 500; cursor: pointer;
-        }
+        .menu-link { display: flex; align-items: center; padding: 12px 15px; color: var(--text-secondary); text-decoration: none; margin-bottom: 8px; border-radius: 12px; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .menu-link:hover, .menu-link.active { background-color: var(--accent-brown); color: white; }
         .menu-link i { margin-right: 15px; width: 20px; }
-        
-        /* মেইন কন্টেন্ট */
         .main-container { flex: 1; padding: 25px 35px; overflow-y: auto; transition: 0.3s; }
-
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .menu-toggle { font-size: 24px; cursor: pointer; color: var(--accent-brown); margin-right: 15px; }
         .header-left { display: flex; align-items: center; }
-        
         .user-info h4 { font-size: 14px; font-weight: 600; }
         .user-info span { font-size: 12px; color: var(--text-secondary); }
-
         .dashboard-top-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 30px; margin-bottom: 30px; }
         .stats-panel { display: flex; flex-direction: column; gap: 30px; }
         .action-panel { display: flex; flex-direction: column; gap: 30px; }
-
-        .card {
-            background: var(--bg-card); border-radius: var(--border-radius-card);
-            padding: 20px; box-shadow: var(--shadow-soft);
-        }
-
+        .card { background: var(--bg-card); border-radius: var(--border-radius-card); padding: 20px; box-shadow: var(--shadow-soft); }
         .stats-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 110px; }
         .stat-head { display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 13px; }
         .stat-value { font-size: 24px; font-weight: 700; margin: 10px 0; }
         .stat-trend { font-size: 12px; display: flex; align-items: center; gap: 5px; }
         .trend-up { color: var(--success); } .trend-down { color: var(--danger); }
-
         .full-width-section { margin-top: 20px; }
         .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
         table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
         th { text-align: left; color: var(--text-secondary); font-weight: 500; padding: 10px 15px; font-size: 13px; }
-        
-        tbody tr {
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: 0.2s;
-        }
+        tbody tr { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; }
         tbody tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
         tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         td { padding: 15px; border-top: 1px solid #f9f9f9; border-bottom: 1px solid #f9f9f9; vertical-align: middle; background: #fff; }
-        
         tr.checked-row td { background: #f0fff4; border-color: #e6fffa; }
         tr.checked-row .item-info, tr.checked-row .amount-text { opacity: 0.5; text-decoration: line-through; }
-        
         .custom-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
         .item-info { display: flex; flex-direction: column; gap: 5px; }
-        
-        .separate-upload-box {
-            border: 2px dashed #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px;
-            display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer;
-            transition: 0.2s; background: #fafafa; height: 120px; position: relative;
-        }
+        .separate-upload-box { border: 2px dashed #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; transition: 0.2s; background: #fafafa; height: 120px; position: relative; }
         .separate-upload-box:hover { border-color: var(--accent-gold); background: #fffbf5; }
         .upload-icon { color: var(--accent-gold); font-size: 24px; margin-bottom: 5px; }
         .upload-text { font-weight: 600; color: var(--text-primary); font-size: 14px; }
-        .upload-preview-mini {
-            width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; top:0; left:0; opacity: 0.5;
-        }
+        .upload-preview-mini { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; top:0; left:0; opacity: 0.5; }
         .upload-status { font-size: 11px; color: #888; margin-top: 5px; z-index: 2; font-weight: bold; }
-
         .file-badges { display: flex; gap: 5px; margin-top: 5px; }
-        .file-badge {
-            font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
-            border: 1px solid #ddd; background: #f8f8f8; display: flex; align-items: center; gap: 3px;
-            transition: 0.2s;
-        }
+        .file-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; background: #f8f8f8; display: flex; align-items: center; gap: 3px; transition: 0.2s; }
         .file-badge:hover { background: var(--accent-brown); color: white; border-color: var(--accent-brown); }
-
         .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
         .badge-success { background: #e8f5e9; color: var(--success); }
         .badge-danger { background: #fbe9e7; color: var(--danger); }
-
         .add-btn-card { background: var(--accent-brown); color: white; display: flex; justify-content: space-between; align-items: center; }
         .btn-primary { background: var(--accent-gold); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
         .btn-primary:hover { background: #b38b5d; }
-        
         .action-btn-group { display: flex; gap: 10px; }
         .btn-outline { background: transparent; border: 1px solid var(--accent-brown); color: var(--accent-brown); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
         .btn-outline:hover { background: var(--bg-main); }
-
         .gauge-container { position: relative; height: 150px; display: flex; justify-content: center; }
         .gauge-center-text { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-
-        /* মডাল */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; display: none; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 30px; border-radius: 20px; width: 500px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 20px; }
         .form-group { margin-bottom: 15px; }
         .form-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; outline: none; }
+        .download-btn { display: inline-block; padding: 5px 10px; background: var(--accent-brown); color: white; text-decoration: none; border-radius: 5px; font-size: 12px; margin-top: 5px; }
+        .copy-badge { font-size: 11px; color: #fff; background: var(--text-secondary); font-weight: bold; display: inline-block; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .overlay-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 999; display: none; }
         
-        .download-btn {
-            display: inline-block; padding: 5px 10px; background: var(--accent-brown); color: white; 
-            text-decoration: none; border-radius: 5px; font-size: 12px; margin-top: 5px;
-        }
-
-        .copy-badge {
-            font-size: 11px; color: #fff; background: var(--text-secondary);
-            font-weight: bold; display: inline-block; padding: 2px 6px; border-radius: 4px; margin-left: 5px;
-        }
-        
-        .overlay-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); z-index: 999; display: none;
-        }
-
         @media print {
             .sidebar, .header, .right-panel, .no-print, .menu-toggle { display: none !important; }
             .main-container { padding: 0; overflow: visible; }
@@ -171,20 +94,16 @@
 
     <nav class="sidebar" id="mainSidebar">
         <div class="brand">
-            <span><i class="fas fa-camera"></i> স্টুডিও ম্যানেজার</span>
+            <span><i class="fas fa-camera"></i> স্টুডিও অনলাইন</span>
             <i class="fas fa-times close-sidebar" onclick="closeSidebar()" style="display: block;"></i>
         </div>
-        
-        <div class="menu-label" style="margin-bottom:10px;font-size:12px;color:#888;">ইনকাম সেকশন</div>
+        <div class="menu-label" style="margin-bottom:10px;font-size:12px;color:#888;">ওয়ার্ক সেকশন</div>
         <a class="menu-link active" onclick="switchSection('photo')" id="nav-photo"><i class="fas fa-image"></i> ছবি (Photo)</a>
         <a class="menu-link" onclick="switchSection('frame')" id="nav-frame"><i class="fas fa-crop-alt"></i> ফ্রেম (Frame)</a>
         <a class="menu-link" onclick="switchSection('seal')" id="nav-seal"><i class="fas fa-stamp"></i> সিল (Seal)</a>
-        
-        <div class="menu-label" style="margin-top: 20px; margin-bottom:10px;font-size:12px;color:#888;">খরচ সেকশন</div>
+        <a class="menu-link" onclick="switchSection('project')" id="nav-project"><i class="fas fa-briefcase"></i> প্রজেক্ট (Project)</a>
+        <div class="menu-label" style="margin-top: 20px; margin-bottom:10px;font-size:12px;color:#888;">হিসাব সেকশন</div>
         <a class="menu-link" onclick="switchSection('expense')" id="nav-expense" style="color: #e74c3c;"><i class="fas fa-money-bill-wave"></i> অফিস খরচ (Expense)</a>
-        
-        <div style="margin-top: 20px;"></div>
-        <a class="menu-link logout-btn" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> সব রিসেট</a>
     </nav>
 
     <main class="main-container">
@@ -195,14 +114,12 @@
             </div>
             <div class="user-info">
                 <h4>অ্যাডমিন</h4>
-                <span>ম্যানেজার</span>
+                <span>অনলাইন (3 PC Sync)</span>
             </div>
         </header>
 
         <div class="printable">
-            
             <div class="dashboard-top-grid">
-                
                 <div class="stats-panel">
                     <div class="stats-cards">
                         <div class="card stat-card">
@@ -221,9 +138,9 @@
                             <div class="stat-trend"><span>হাতে আছে</span></div>
                         </div>
                         <div class="card stat-card">
-                            <div class="stat-head"><span>এন্ট্রি সংখ্যা</span><i class="fas fa-list-alt stat-icon"></i></div>
+                            <div class="stat-head"><span>অর্ডার</span><i class="fas fa-list-alt stat-icon"></i></div>
                             <div class="stat-value" id="txCount">0</div>
-                            <div class="stat-trend"><span>মোট রেকর্ড</span></div>
+                            <div class="stat-trend"><span>মোট কাজ</span></div>
                         </div>
                     </div>
                 </div>
@@ -236,7 +153,6 @@
                         </div>
                         <button class="btn-primary" onclick="toggleModal(true)">+ যুক্ত করুন</button>
                     </div>
-
                     <div class="card">
                         <div class="chart-header"><h3>আজকের অবস্থা</h3></div>
                         <div class="gauge-container">
@@ -248,7 +164,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="card full-width-section" style="background: transparent; box-shadow: none; padding: 0;">
@@ -276,7 +191,6 @@
                     <tbody id="transactionTableBody"></tbody>
                 </table>
             </div>
-
         </div>
     </main>
 
@@ -284,81 +198,51 @@
         <div class="modal-box">
             <i class="fas fa-times modal-close" onclick="toggleModal(false)"></i>
             <h3 style="margin-bottom: 20px; color: var(--accent-brown);" id="modalTitle">নতুন এন্ট্রি</h3>
-            
             <div class="form-group">
                 <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">তারিখ</label>
                 <input type="date" id="inputDate" class="form-input">
             </div>
-
             <div id="orderFields">
                 <div class="form-group">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">ফাইল আপলোড (অপশনাল)</label>
-                    
                     <div class="separate-upload-box" id="slot-photo" onclick="document.getElementById('inputPhoto').click()">
-                        <i class="fas fa-image upload-icon"></i>
-                        <span class="upload-text">ছবি আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewPhoto" class="upload-preview-mini">
-                        </div>
+                        <i class="fas fa-image upload-icon"></i> <span class="upload-text">ছবি আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewPhoto" class="upload-preview-mini"></div>
                         <span class="upload-status" id="statusPhoto">কোনো ফাইল নেই</span>
                         <input type="file" id="inputPhoto" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewPhoto', 'statusPhoto', 'photo')">
                     </div>
-
                     <div class="separate-upload-box" id="slot-frame" onclick="document.getElementById('inputFrame').click()">
-                        <i class="fas fa-crop-alt upload-icon"></i>
-                        <span class="upload-text">ফ্রেম আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewFrame" class="upload-preview-mini">
-                        </div>
+                        <i class="fas fa-crop-alt upload-icon"></i> <span class="upload-text">ফ্রেম আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewFrame" class="upload-preview-mini"></div>
                         <span class="upload-status" id="statusFrame">কোনো ফাইল নেই</span>
                         <input type="file" id="inputFrame" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewFrame', 'statusFrame', 'frame')">
                     </div>
-
                     <div class="separate-upload-box" id="slot-seal" onclick="document.getElementById('inputSeal').click()">
-                        <i class="fas fa-stamp upload-icon"></i>
-                        <span class="upload-text">সিল আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewSeal" class="upload-preview-mini">
-                        </div>
+                        <i class="fas fa-stamp upload-icon"></i> <span class="upload-text">সিল আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewSeal" class="upload-preview-mini"></div>
                         <span class="upload-status" id="statusSeal">কোনো ফাইল নেই</span>
                         <input type="file" id="inputSeal" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewSeal', 'statusSeal', 'seal')">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সাইজ (Size)</label>
                     <select id="inputSize" class="form-input">
-                        <option value="">সিলেক্ট করুন</option>
-                        <option value="PASSPORT SIZE">PASSPORT SIZE</option>
-                        <option value="STAMP">STAMP</option>
-                        <option value="3 R">3 R</option>
-                        <option value="4 R">4 R</option>
-                        <option value="5 R">5 R</option>
-                        <option value="8 R">8 R</option>
-                        <option value="10 R">10 R</option>
-                        <option value="12 R">12 R</option>
-                        <option value="10 L">10 L</option>
-                        <option value="A4">A4</option>
-                        <option value="Legal">Legal</option>
+                        <option value="">সিলেক্ট করুন</option><option value="PASSPORT SIZE">PASSPORT SIZE</option><option value="STAMP">STAMP</option><option value="3 R">3 R</option><option value="4 R">4 R</option><option value="5 R">5 R</option><option value="8 R">8 R</option><option value="10 R">10 R</option><option value="12 R">12 R</option><option value="10 L">10 L</option><option value="A4">A4</option><option value="Legal">Legal</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কত কপি? (Number of Copies)</label>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কত কপি?</label>
                     <input type="number" id="inputCopies" class="form-input" placeholder="যেমন: ২ বা ৫">
                 </div>
             </div>
-
             <div class="form-group">
-                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কাস্টমারের নাম / বিবরণ</label>
-                <input type="text" id="inputDesc" class="form-input" placeholder="বিবরণ লিখুন...">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">বিবরণ</label>
+                <input type="text" id="inputDesc" class="form-input" placeholder="লিখুন...">
             </div>
-
             <div class="form-group">
                 <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">পরিমাণ (টাকা)</label>
                 <input type="number" id="inputAmount" class="form-input" placeholder="০০০">
             </div>
-            
             <button class="btn-primary" style="width: 100%; background: var(--accent-brown);" onclick="processTransaction()">সংরক্ষণ করুন</button>
         </div>
     </div>
@@ -367,305 +251,305 @@
         <div class="modal-box" style="width: auto; max-width: 90%; text-align: center;">
             <i class="fas fa-times modal-close" onclick="document.getElementById('imageViewerModal').style.display='none'"></i>
             <img id="fullSizeImage" src="" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">
-            <br>
-            <p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p>
-            <br>
-            <a id="downloadLink" href="" download="image.png" class="download-btn">
-                <i class="fas fa-download"></i> ডাউনলোড করুন
-            </a>
+            <br><p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p><br>
+            <a id="downloadLink" href="" download="image.png" class="download-btn"><i class="fas fa-download"></i> ডাউনলোড করুন</a>
         </div>
     </div>
 
-<script>
-    // --- গ্লোবাল ভেরিয়েবল ---
-    let transactions = JSON.parse(localStorage.getItem('studio_master_data_v5')) || [];
-    let doughnutChartInstance = null;
-    let currentCategory = 'photo'; // photo, frame, seal, expense
-    
-    let tempImages = {
-        photo: { base64: null, name: null },
-        frame: { base64: null, name: null },
-        seal: { base64: null, name: null }
-    };
+    <script type="module">
+        // Firebase মডিউল ইমপোর্ট
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-    function switchSection(category) {
-        currentCategory = category;
-        closeSidebar();
-        
-        const titles = { 'photo': 'ছবি ড্যাশবোর্ড', 'frame': 'ফ্রেম ড্যাশবোর্ড', 'seal': 'সিল ড্যাশবোর্ড', 'expense': 'ব্যয় ব্যবস্থাপনা' };
-        const btnTitles = { 'photo': 'নতুন ছবির অর্ডার?', 'frame': 'নতুন ফ্রেম অর্ডার?', 'seal': 'নতুন সিল অর্ডার?', 'expense': 'নতুন খরচ যুক্ত করুন?' };
-        const modalTitles = { 'photo': 'নতুন ছবির অর্ডার', 'frame': 'নতুন ফ্রেম অর্ডার', 'seal': 'নতুন সিল অর্ডার', 'expense': 'নতুন খরচ' };
-        
-        document.getElementById('sectionTitle').innerText = titles[category];
-        document.getElementById('btnTitleText').innerText = btnTitles[category];
-        document.getElementById('tableTitle').innerText = `সাম্প্রতিক ${titles[category].split(' ')[0]} তালিকা`;
-        document.getElementById('modalTitle').innerText = modalTitles[category];
+        // ==========================================
+        // ধাপ ৩: এখানে আপনার Firebase কনফিগারেশন বসান
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_// Import the functions you need from the SDKs you need
 
-        document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
-        document.getElementById(`nav-${category}`).classList.add('active');
+import { initializeApp } from "firebase/app";
 
-        loadDashboardData();
-    }
+import { getAnalytics } from "firebase/analytics";
 
-    function openSidebar() {
-        document.getElementById('mainSidebar').classList.add('active');
-        document.getElementById('sidebarOverlay').style.display = 'block';
-    }
-    function closeSidebar() {
-        document.getElementById('mainSidebar').classList.remove('active');
-        document.getElementById('sidebarOverlay').style.display = 'none';
-    }
+// TODO: Add SDKs for Firebase products that you want to use
 
-    function toggleModal(show) {
-        const modal = document.getElementById('entryModal');
-        modal.style.display = show ? 'flex' : 'none';
-        if(show) {
-            document.getElementById('inputDate').valueAsDate = new Date();
-            const ids = ['inputPhoto', 'inputFrame', 'inputSeal', 'inputSize', 'inputCopies', 'inputDesc', 'inputAmount'];
-            ids.forEach(id => document.getElementById(id).value = '');
-            
-            ['previewPhoto', 'previewFrame', 'previewSeal'].forEach(id => document.getElementById(id).style.display = 'none');
-            ['statusPhoto', 'statusFrame', 'statusSeal'].forEach(id => {
-                document.getElementById(id).innerText = 'কোনো ফাইল নেই';
-                document.getElementById(id).style.color = '#888';
-            });
-            
-            // ক্যাটাগরি অনুযায়ী ফিল্ড দেখানো/লুকানো
-            const orderFields = document.getElementById('orderFields');
-            if(currentCategory === 'expense') {
-                orderFields.style.display = 'none'; // খরচের সময় ছবি/সাইজ লুকানো
-            } else {
-                orderFields.style.display = 'block';
-                document.getElementById('slot-photo').style.display = 'none';
-                document.getElementById('slot-frame').style.display = 'none';
-                document.getElementById('slot-seal').style.display = 'none';
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-                if(currentCategory === 'photo') document.getElementById('slot-photo').style.display = 'flex';
-                else if(currentCategory === 'frame') document.getElementById('slot-frame').style.display = 'flex';
-                else if(currentCategory === 'seal') document.getElementById('slot-seal').style.display = 'flex';
-            }
 
-            tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
-        }
-    }
 
-    function previewImage(input, previewId, statusId, type) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById(previewId).src = e.target.result;
-                document.getElementById(previewId).style.display = 'block';
-                document.getElementById(statusId).innerText = 'ফাইল সিলেক্টেড';
-                document.getElementById(statusId).style.color = 'var(--success)';
-                
-                tempImages[type].base64 = e.target.result;
-                tempImages[type].name = file.name;
-            }
-            reader.readAsDataURL(file);
-        }
-    }
+// Your web app's Firebase configuration
 
-    function processTransaction() {
-        const date = document.getElementById('inputDate').value;
-        const desc = document.getElementById('inputDesc').value;
-        const amount = parseFloat(document.getElementById('inputAmount').value);
-        
-        let size = '', copies = '';
-        if(currentCategory !== 'expense') {
-            size = document.getElementById('inputSize').value;
-            copies = document.getElementById('inputCopies').value;
-        }
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-        if (isNaN(amount) || amount <= 0) {
-            alert("টাকার পরিমাণ অবশ্যই দিতে হবে।"); return;
-        }
+const firebaseConfig = {
 
-        // অটোমেটিক ইনকাম বা খরচ নির্ধারণ
-        let type = currentCategory === 'expense' ? 'expense' : 'income';
+  apiKey: "AIzaSyBWeWCxj1Ptk6t3SF_UEeJBQhxRH3NsrUI",
 
-        const newTx = { 
-            id: Date.now(), 
-            category: currentCategory, 
-            date, type, desc, size, copies, amount, 
-            images: currentCategory === 'expense' ? {} : { ...tempImages }, 
-            isChecked: false 
+  authDomain: "studiomanager-7b701.firebaseapp.com",
+
+  databaseURL: "https://studiomanager-7b701-default-rtdb.firebaseio.com",
+
+  projectId: "studiomanager-7b701",
+
+  storageBucket: "studiomanager-7b701.firebasestorage.app",
+
+  messagingSenderId: "490671078365",
+
+  appId: "1:490671078365:web:35bf071bf954a3174b9434",
+
+  measurementId: "G-YEQ84W1NVB"
+
+};
+
+
+
+// Initialize Firebase
+
+const app = initializeApp(firebaseConfig);
+
+const analytics = getAnalytics(app);"
         };
-        
-        try {
-            transactions.push(newTx);
-            localStorage.setItem('studio_master_data_v5', JSON.stringify(transactions));
-            toggleModal(false);
-            loadDashboardData();
-        } catch (e) {
-            alert("মেমোরি ফুল! সম্ভবত ছবির সাইজ অনেক বড়।");
-            transactions.pop();
-        }
-    }
 
-    function toggleCheck(id) {
-        const txIndex = transactions.findIndex(t => t.id === id);
-        if (txIndex !== -1) {
-            transactions[txIndex].isChecked = !transactions[txIndex].isChecked;
-            localStorage.setItem('studio_master_data_v5', JSON.stringify(transactions));
-            loadDashboardData();
-        }
-    }
+        // Firebase Initialize
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const transactionsRef = ref(db, 'studio_transactions');
 
-    function deleteTransaction(id) {
-        if(confirm("মুছে ফেলতে চান?")) {
-            transactions = transactions.filter(tx => tx.id !== id);
-            localStorage.setItem('studio_master_data_v5', JSON.stringify(transactions));
-            loadDashboardData();
-        }
-    }
+        // গ্লোবাল ভেরিয়েবল
+        let transactions = [];
+        let doughnutChartInstance = null;
+        let currentCategory = 'photo';
+        let tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
 
-    function clearAllData() {
-        if(confirm("সতর্কতা: সব ডাটা মুছে যাবে!")) {
-            localStorage.removeItem('studio_master_data_v5');
-            transactions = [];
-            loadDashboardData();
-        }
-    }
-
-    function viewImage(imgSrc, imgName) {
-        const modal = document.getElementById('imageViewerModal');
-        const img = document.getElementById('fullSizeImage');
-        const dlLink = document.getElementById('downloadLink');
-        const nameText = document.getElementById('imageOriginalName');
-        
-        img.src = imgSrc;
-        dlLink.href = imgSrc;
-        dlLink.setAttribute("download", imgName || "download.png");
-        nameText.innerText = "ফাইলের নাম: " + (imgName || "অজানা");
-        modal.style.display = 'flex';
-    }
-
-    function downloadCSV() {
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
-        
-        if(currentCategory === 'expense') {
-            csvContent += "তারিখ,বিবরণ,পরিমাণ (টাকা)\n";
-        } else {
-            csvContent += "তারিখ,বিবরণ,সাইজ,কপি,পরিমাণ (টাকা),অবস্থা\n"; 
-        }
-
-        // বর্তমান ক্যাটাগরির ডাটা শুধু ডাউনলোড হবে
-        let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
-
-        filteredTransactions.forEach(function(row) {
-            let rowData = [];
-            if(currentCategory === 'expense') {
-                rowData = [row.date, `"${row.desc}"`, row.amount];
-            } else {
-                rowData = [
-                    row.date, `"${row.desc}"`, `"${row.size || ''}"`, `"${row.copies || ''}"`, row.amount,
-                    row.isChecked ? "সম্পন্ন" : "অসম্পন্ন"
-                ];
-            }
-            csvContent += rowData.join(",") + "\r\n";
-        });
-
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `studio_${currentCategory}_report.csv`);
-        document.body.appendChild(link);
-        link.click();
-    }
-
-    function loadDashboardData() {
-        let totalIncome = 0, totalExpense = 0, todaySum = 0;
-        const todayStr = new Date().toISOString().split('T')[0];
-        const tableBody = document.getElementById('transactionTableBody');
-        tableBody.innerHTML = '';
-
-        // সব ট্রানজেকশন থেকে হিসাব বের করা
-        transactions.forEach(tx => {
-            if (tx.type === 'income') totalIncome += tx.amount;
-            else totalExpense += tx.amount;
-        });
-
-        // শুধু বর্তমান ক্যাটাগরির ডাটা টেবিলে দেখাবে
-        let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
-        // তারিখ অনুযায়ী সাজানো (নতুন আগে)
-        filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        filteredTransactions.forEach((tx) => {
-            // আজকের হিসাব শুধু বর্তমান ক্যাটাগরির ওপর
-            if (tx.date === todayStr) todaySum += tx.amount;
-
-            const badgeClass = tx.type === 'income' ? 'badge-success' : 'badge-danger';
-            const badgeText = tx.type === 'income' ? 'আয়' : 'ব্যয়';
-            const amountSign = tx.type === 'income' ? '+' : '-';
+        // --- উইন্ডো গ্লোবাল ফাংশন এক্সপোজ (HTML onclick এর জন্য) ---
+        window.switchSection = function(category) {
+            currentCategory = category;
+            closeSidebar();
             
-            let detailsHtml = '';
-            if(currentCategory !== 'expense') {
-                const sizeHtml = tx.size ? `<span style="font-size:11px;font-weight:bold;color:var(--accent-brown);background:#f0e6dd;padding:2px 5px;border-radius:4px;">${tx.size}</span>` : '';
-                const copiesHtml = tx.copies ? `<span class="copy-badge">${tx.copies} কপি</span>` : '';
-                
-                // ফাইল ব্যাজ
-                let filesHtml = '<div class="file-badges">';
-                if (tx.images.photo && tx.images.photo.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.photo.base64}', '${tx.images.photo.name}')"><i class="fas fa-image"></i> ছবি</div>`;
-                if (tx.images.frame && tx.images.frame.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.frame.base64}', '${tx.images.frame.name}')"><i class="fas fa-crop-alt"></i> ফ্রেম</div>`;
-                if (tx.images.seal && tx.images.seal.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.seal.base64}', '${tx.images.seal.name}')"><i class="fas fa-stamp"></i> সিল</div>`;
-                filesHtml += '</div>';
+            const titles = { 'photo': 'ছবি ড্যাশবোর্ড', 'frame': 'ফ্রেম ড্যাশবোর্ড', 'seal': 'সিল ড্যাশবোর্ড', 'project': 'প্রজেক্ট ড্যাশবোর্ড', 'expense': 'ব্যয় ব্যবস্থাপনা' };
+            const btnTitles = { 'photo': 'নতুন ছবির অর্ডার?', 'frame': 'নতুন ফ্রেম অর্ডার?', 'seal': 'নতুন সিল অর্ডার?', 'project': 'নতুন প্রজেক্ট?', 'expense': 'নতুন খরচ?' };
+            
+            document.getElementById('sectionTitle').innerText = titles[category];
+            document.getElementById('btnTitleText').innerText = btnTitles[category];
+            document.getElementById('tableTitle').innerText = `সাম্প্রতিক ${titles[category].split(' ')[0]} তালিকা`;
+            document.getElementById('modalTitle').innerText = category === 'expense' ? 'নতুন খরচ' : 'নতুন অর্ডার';
 
-                detailsHtml = `
-                    <div class="item-info">
-                        <div style="font-weight: 600;">${sizeHtml} ${copiesHtml}</div>
-                        <div style="font-size:12px;color:#555;">${tx.desc}</div>
-                        ${filesHtml}
-                    </div>
-                `;
-            } else {
-                // খরচের জন্য সিম্পল ভিউ
-                detailsHtml = `<div style="font-weight:600; color:#e74c3c;">${tx.desc}</div>`;
+            document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${category}`).classList.add('active');
+
+            loadDashboardData();
+        }
+
+        window.processTransaction = function() {
+            const date = document.getElementById('inputDate').value;
+            const desc = document.getElementById('inputDesc').value;
+            const amount = parseFloat(document.getElementById('inputAmount').value);
+            
+            let size = '', copies = '';
+            if(currentCategory !== 'expense') {
+                size = document.getElementById('inputSize').value;
+                copies = document.getElementById('inputCopies').value;
             }
 
-            const rowClass = tx.isChecked ? 'checked-row' : '';
-            const checkedAttr = tx.isChecked ? 'checked' : '';
-            const checkboxHtml = currentCategory !== 'expense' ? 
-                `<td class="checkbox-col"><input type="checkbox" class="custom-checkbox" onclick="toggleCheck(${tx.id})" ${checkedAttr}></td>` : 
-                `<td class="checkbox-col">-</td>`;
+            if (isNaN(amount) || amount <= 0) {
+                alert("টাকার পরিমাণ অবশ্যই দিতে হবে।"); return;
+            }
 
-            const row = `<tr class="${rowClass}">
-                ${checkboxHtml}
-                <td>${detailsHtml}</td>
-                <td style="color: #8D8179; font-size: 13px;">${new Date(tx.date).toLocaleDateString('bn-BD')}</td>
-                <td style="font-weight: 600;">${amountSign}${tx.amount.toLocaleString()} ৳</td>
-                <td class="no-print">
-                    <i class="fas fa-trash-alt" style="color: #e74c3c; cursor: pointer;" onclick="deleteTransaction(${tx.id})"></i>
-                </td>
-            </tr>`;
-            tableBody.innerHTML += row;
-        });
+            let type = currentCategory === 'expense' ? 'expense' : 'income';
 
-        document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + ' ৳';
-        document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + ' ৳';
-        document.getElementById('balance').innerText = (totalIncome - totalExpense).toLocaleString() + ' ৳';
-        document.getElementById('txCount').innerText = filteredTransactions.length;
-        document.getElementById('todayTotal').innerText = todaySum.toLocaleString() + ' ৳';
+            const newTx = { 
+                category: currentCategory, 
+                date, type, desc, size, copies, amount, 
+                images: currentCategory === 'expense' ? {} : { ...tempImages }, 
+                isChecked: false 
+            };
+            
+            // Firebase এ ডাটা পাঠানো
+            push(transactionsRef, newTx)
+                .then(() => {
+                    alert("ডাটা সফলভাবে সেভ হয়েছে (অনলাইন)");
+                    toggleModal(false);
+                })
+                .catch((error) => {
+                    alert("এরর: " + error.message);
+                });
+        }
 
-        const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
-        if (doughnutChartInstance) doughnutChartInstance.destroy();
-        doughnutChartInstance = new Chart(doughnutCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['আয়', 'ব্যয়'],
-                datasets: [{
-                    data: [totalIncome === 0 && totalExpense === 0 ? 1 : totalIncome, totalExpense],
-                    backgroundColor: ['#5B4A42', '#E0D6CC'],
-                    borderWidth: 0, circumference: 180, rotation: 270, cutout: '75%'
-                }]
-            },
-            options: { responsive: true, plugins: { legend: { display: false } } }
-        });
-    }
+        window.deleteTransaction = function(id) {
+            if(confirm("মুছে ফেলতে চান? এটি সব পিসি থেকে মুছে যাবে!")) {
+                const itemRef = ref(db, `studio_transactions/${id}`);
+                remove(itemRef);
+            }
+        }
 
-    // প্রথম লোডে ডিফল্ট
-    loadDashboardData();
-</script>
+        window.toggleCheck = function(id, currentStatus) {
+            const itemRef = ref(db, `studio_transactions/${id}`);
+            update(itemRef, { isChecked: !currentStatus });
+        }
+
+        // --- সাধারণ ফাংশন ---
+        window.openSidebar = function() { document.getElementById('mainSidebar').classList.add('active'); document.getElementById('sidebarOverlay').style.display = 'block'; }
+        window.closeSidebar = function() { document.getElementById('mainSidebar').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
+        
+        window.toggleModal = function(show) {
+            const modal = document.getElementById('entryModal');
+            modal.style.display = show ? 'flex' : 'none';
+            if(show) {
+                document.getElementById('inputDate').valueAsDate = new Date();
+                ['inputPhoto', 'inputFrame', 'inputSeal', 'inputSize', 'inputCopies', 'inputDesc', 'inputAmount'].forEach(id => document.getElementById(id).value = '');
+                ['previewPhoto', 'previewFrame', 'previewSeal'].forEach(id => document.getElementById(id).style.display = 'none');
+                ['statusPhoto', 'statusFrame', 'statusSeal'].forEach(id => { document.getElementById(id).innerText = 'কোনো ফাইল নেই'; document.getElementById(id).style.color = '#888'; });
+                
+                const orderFields = document.getElementById('orderFields');
+                if(currentCategory === 'expense') {
+                    orderFields.style.display = 'none';
+                } else {
+                    orderFields.style.display = 'block';
+                    document.getElementById('slot-photo').style.display = 'none';
+                    document.getElementById('slot-frame').style.display = 'none';
+                    document.getElementById('slot-seal').style.display = 'none';
+
+                    if(currentCategory === 'photo') document.getElementById('slot-photo').style.display = 'flex';
+                    else if(currentCategory === 'frame') document.getElementById('slot-frame').style.display = 'flex';
+                    else if(currentCategory === 'seal') document.getElementById('slot-seal').style.display = 'flex';
+                    else if(currentCategory === 'project') {
+                        document.getElementById('slot-photo').style.display = 'flex';
+                        document.getElementById('slot-frame').style.display = 'flex';
+                        document.getElementById('slot-seal').style.display = 'flex';
+                    }
+                }
+                tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
+            }
+        }
+
+        window.previewImage = function(input, previewId, statusId, type) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                // ফাইলের সাইজ চেক (লিমিট ১ মেগাবাইট রাখা ভালো ফ্রি ডাটাবেসের জন্য)
+                if(file.size > 1000000) {
+                    alert("সতর্কতা: ১ মেগাবাইটের বেশি ফাইল আপলোড করলে ডাটাবেস স্লো হতে পারে!");
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(previewId).style.display = 'block';
+                    document.getElementById(statusId).innerText = 'ফাইল সিলেক্টেড';
+                    document.getElementById(statusId).style.color = 'var(--success)';
+                    tempImages[type].base64 = e.target.result;
+                    tempImages[type].name = file.name;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.viewImage = function(imgSrc, imgName) {
+            const modal = document.getElementById('imageViewerModal');
+            const img = document.getElementById('fullSizeImage');
+            const dlLink = document.getElementById('downloadLink');
+            const nameText = document.getElementById('imageOriginalName');
+            img.src = imgSrc;
+            dlLink.href = imgSrc;
+            dlLink.setAttribute("download", imgName || "download.png");
+            nameText.innerText = "ফাইলের নাম: " + (imgName || "অজানা");
+            modal.style.display = 'flex';
+        }
+
+        window.downloadCSV = function() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            if(currentCategory === 'expense') { csvContent += "তারিখ,বিবরণ,পরিমাণ (টাকা)\n"; } 
+            else { csvContent += "তারিখ,বিবরণ,সাইজ,কপি,পরিমাণ (টাকা),অবস্থা\n"; }
+
+            let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
+            filteredTransactions.forEach(function(row) {
+                let rowData = [];
+                if(currentCategory === 'expense') { rowData = [row.date, `"${row.desc}"`, row.amount]; } 
+                else { rowData = [row.date, `"${row.desc}"`, `"${row.size || ''}"`, `"${row.copies || ''}"`, row.amount, row.isChecked ? "সম্পন্ন" : "অসম্পন্ন"]; }
+                csvContent += rowData.join(",") + "\r\n";
+            });
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `studio_${currentCategory}_report.csv`);
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        // --- ডাটা লোড এবং রিয়েলটাইম লিসেনার ---
+        function loadDashboardData() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const tableBody = document.getElementById('transactionTableBody');
+            
+            // রিয়েলটাইম লিসেনার
+            onValue(transactionsRef, (snapshot) => {
+                const data = snapshot.val();
+                transactions = [];
+                
+                // ডাটা অবজেক্ট থেকে অ্যারেতে রূপান্তর
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        transactions.push({ id: key, ...data[key] });
+                    });
+                }
+
+                // ইউআই আপডেট
+                let totalIncome = 0, totalExpense = 0, todaySum = 0;
+                tableBody.innerHTML = '';
+
+                transactions.forEach(tx => {
+                    if (tx.type === 'income') totalIncome += tx.amount;
+                    else totalExpense += tx.amount;
+                });
+
+                let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
+                filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                filteredTransactions.forEach((tx) => {
+                    if (tx.date === todayStr) todaySum += tx.amount;
+                    const amountSign = tx.type === 'income' ? '+' : '-';
+                    
+                    let detailsHtml = '';
+                    if(currentCategory !== 'expense') {
+                        const sizeHtml = tx.size ? `<span style="font-size:11px;font-weight:bold;color:var(--accent-brown);background:#f0e6dd;padding:2px 5px;border-radius:4px;">${tx.size}</span>` : '';
+                        const copiesHtml = tx.copies ? `<span class="copy-badge">${tx.copies} কপি</span>` : '';
+                        let filesHtml = '<div class="file-badges">';
+                        if (tx.images.photo && tx.images.photo.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.photo.base64}', '${tx.images.photo.name}')"><i class="fas fa-image"></i> ছবি</div>`;
+                        if (tx.images.frame && tx.images.frame.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.frame.base64}', '${tx.images.frame.name}')"><i class="fas fa-crop-alt"></i> ফ্রেম</div>`;
+                        if (tx.images.seal && tx.images.seal.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.seal.base64}', '${tx.images.seal.name}')"><i class="fas fa-stamp"></i> সিল</div>`;
+                        filesHtml += '</div>';
+                        detailsHtml = `<div class="item-info"><div style="font-weight: 600;">${sizeHtml} ${copiesHtml}</div><div style="font-size:12px;color:#555;">${tx.desc}</div>${filesHtml}</div>`;
+                    } else {
+                        detailsHtml = `<div style="font-weight:600; color:#e74c3c;">${tx.desc}</div>`;
+                    }
+
+                    const rowClass = tx.isChecked ? 'checked-row' : '';
+                    const checkedAttr = tx.isChecked ? 'checked' : '';
+                    const checkboxHtml = currentCategory !== 'expense' ? `<td class="checkbox-col"><input type="checkbox" class="custom-checkbox" onclick="toggleCheck('${tx.id}', ${tx.isChecked})" ${checkedAttr}></td>` : `<td class="checkbox-col">-</td>`;
+
+                    const row = `<tr class="${rowClass}">${checkboxHtml}<td>${detailsHtml}</td><td style="color: #8D8179; font-size: 13px;">${new Date(tx.date).toLocaleDateString('bn-BD')}</td><td style="font-weight: 600;">${amountSign}${tx.amount.toLocaleString()} ৳</td><td class="no-print"><i class="fas fa-trash-alt" style="color: #e74c3c; cursor: pointer;" onclick="deleteTransaction('${tx.id}')"></i></td></tr>`;
+                    tableBody.innerHTML += row;
+                });
+
+                document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + ' ৳';
+                document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + ' ৳';
+                document.getElementById('balance').innerText = (totalIncome - totalExpense).toLocaleString() + ' ৳';
+                document.getElementById('txCount').innerText = filteredTransactions.length;
+                document.getElementById('todayTotal').innerText = todaySum.toLocaleString() + ' ৳';
+
+                const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+                if (doughnutChartInstance) doughnutChartInstance.destroy();
+                doughnutChartInstance = new Chart(doughnutCtx, { type: 'doughnut', data: { labels: ['আয়', 'ব্যয়'], datasets: [{ data: [totalIncome === 0 && totalExpense === 0 ? 1 : totalIncome, totalExpense], backgroundColor: ['#5B4A42', '#E0D6CC'], borderWidth: 0, circumference: 180, rotation: 270, cutout: '75%' }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+            });
+        }
+
+        // ইনিশিয়াল লোড
+        loadDashboardData();
+    </script>
 
 </body>
 </html>
