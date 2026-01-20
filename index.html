@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্টুডিও অনলাইন ম্যানেজার (লাইভ)</title>
+    <title>স্টুডিও ম্যানেজার - V11 (Online Update)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* CSS ডিজাইন */
+        /* CSS স্টাইল আগের মতোই */
         :root { --bg-main: #F8F6F2; --bg-sidebar: #FFFFFF; --bg-card: #FFFFFF; --text-primary: #3E3229; --text-secondary: #8D8179; --accent-brown: #5B4A42; --accent-gold: #C69C6D; --success: #27ae60; --danger: #e74c3c; --shadow-soft: 0 5px 20px rgba(62, 50, 41, 0.05); --border-radius-card: 16px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; }
@@ -46,7 +46,7 @@
         tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         td { padding: 15px; border-top: 1px solid #f9f9f9; border-bottom: 1px solid #f9f9f9; vertical-align: middle; background: #fff; }
         tr.checked-row td { background: #f0fff4; border-color: #e6fffa; }
-        tr.checked-row .item-info, tr.checked-row .amount-text { opacity: 0.5; text-decoration: line-through; }
+        tr.checked-row .item-info, .checked-row .amount-text { opacity: 0.5; text-decoration: line-through; }
         .custom-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
         .item-info { display: flex; flex-direction: column; gap: 5px; }
         .separate-upload-box { border: 2px dashed #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; transition: 0.2s; background: #fafafa; height: 120px; position: relative; }
@@ -76,13 +76,24 @@
         .form-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; outline: none; }
         .download-btn { display: inline-block; padding: 5px 10px; background: var(--accent-brown); color: white; text-decoration: none; border-radius: 5px; font-size: 12px; margin-top: 5px; }
         .copy-badge { font-size: 11px; color: #fff; background: var(--text-secondary); font-weight: bold; display: inline-block; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .option-group { display: flex; gap: 20px; margin-top: 5px; }
+        .option-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; font-size: 14px; background: #f8f8f8; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 100%; transition: 0.2s; }
+        .option-label:hover { border-color: var(--accent-gold); background: #fff; }
+        .option-label input { accent-color: var(--accent-brown); width: 18px; height: 18px; }
+        .seal-options { display: flex; gap: 20px; margin-top: 5px; }
+        .seal-option-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; font-size: 14px; background: #f8f8f8; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 100%; transition: 0.2s; }
+        .seal-option-label:hover { border-color: var(--accent-gold); background: #fff; }
+        .seal-option-label input { accent-color: var(--accent-brown); width: 18px; height: 18px; }
         .overlay-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 999; display: none; }
-        
+        .report-nav { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; justify-content: center; }
+        .report-btn { background: var(--bg-card); border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .report-btn:hover { background: var(--accent-brown); color: white; }
+        .report-title { font-size: 18px; font-weight: 700; color: var(--text-primary); min-width: 150px; text-align: center; }
+
         @media print {
-            .sidebar, .header, .right-panel, .no-print, .menu-toggle { display: none !important; }
+            .sidebar, .header, .right-panel, .no-print, .menu-toggle, .report-nav button { display: none !important; }
             .main-container { padding: 0; overflow: visible; }
-            .dashboard-top-grid { display: block; }
-            .stats-cards { margin-bottom: 20px; grid-template-columns: repeat(4, 1fr); }
+            .dashboard-top-grid { display: none; }
             body { height: auto; overflow: visible; }
             .checkbox-col { display: none; }
         }
@@ -100,12 +111,14 @@
         
         <div class="menu-label" style="margin-bottom:10px;font-size:12px;color:#888;">ওয়ার্ক সেকশন</div>
         <a class="menu-link active" onclick="switchSection('photo')" id="nav-photo"><i class="fas fa-image"></i> ছবি (Photo)</a>
-        <a class="menu-link" onclick="switchSection('frame')" id="nav-frame"><i class="fas fa-crop-alt"></i> ফ্রেম (Frame)</a>
+        <a class="menu-link" onclick="switchSection('frame')" id="nav-frame"><i class="fas fa-crop-alt"></i> ফ্রেম ও লেমিনেটিং</a>
         <a class="menu-link" onclick="switchSection('seal')" id="nav-seal"><i class="fas fa-stamp"></i> সিল (Seal)</a>
-        <a class="menu-link" onclick="switchSection('project')" id="nav-project"><i class="fas fa-briefcase"></i> প্রজেক্ট (Project)</a>
+        <a class="menu-link" onclick="switchSection('photocopy')" id="nav-photocopy"><i class="fas fa-copy"></i> ফটোকপি (Photocopy)</a>
+        <a class="menu-link" onclick="switchSection('online')" id="nav-online"><i class="fas fa-globe"></i> অনলাইন কাজ (Online)</a>
         
         <div class="menu-label" style="margin-top: 20px; margin-bottom:10px;font-size:12px;color:#888;">হিসাব সেকশন</div>
         <a class="menu-link" onclick="switchSection('expense')" id="nav-expense" style="color: #e74c3c;"><i class="fas fa-money-bill-wave"></i> অফিস খরচ (Expense)</a>
+        <a class="menu-link" onclick="switchSection('report')" id="nav-report" style="color: var(--accent-brown);"><i class="fas fa-calculator"></i> মোট হিসাব (Report)</a>
     </nav>
 
     <main class="main-container">
@@ -122,7 +135,7 @@
 
         <div class="printable">
             
-            <div class="dashboard-top-grid">
+            <div class="dashboard-top-grid" id="mainDashboardStats">
                 <div class="stats-panel">
                     <div class="stats-cards">
                         <div class="card stat-card">
@@ -141,9 +154,9 @@
                             <div class="stat-trend"><span>হাতে আছে</span></div>
                         </div>
                         <div class="card stat-card">
-                            <div class="stat-head"><span>অর্ডার</span><i class="fas fa-list-alt stat-icon"></i></div>
+                            <div class="stat-head"><span>এন্ট্রি</span><i class="fas fa-list-alt stat-icon"></i></div>
                             <div class="stat-value" id="txCount">0</div>
-                            <div class="stat-trend"><span>মোট কাজ</span></div>
+                            <div class="stat-trend"><span>মোট রেকর্ড</span></div>
                         </div>
                     </div>
                 </div>
@@ -156,7 +169,6 @@
                         </div>
                         <button class="btn-primary" onclick="toggleModal(true)">+ যুক্ত করুন</button>
                     </div>
-
                     <div class="card">
                         <div class="chart-header"><h3>আজকের অবস্থা</h3></div>
                         <div class="gauge-container">
@@ -168,6 +180,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div id="reportNavigation" class="report-nav" style="display: none;">
+                <button class="report-btn" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> আগের মাস</button>
+                <div class="report-title" id="currentMonthLabel">January 2026</div>
+                <button class="report-btn" onclick="changeMonth(1)">পরের মাস <i class="fas fa-chevron-right"></i></button>
             </div>
 
             <div class="card full-width-section" style="background: transparent; box-shadow: none; padding: 0;">
@@ -195,7 +213,6 @@
                     <tbody id="transactionTableBody"></tbody>
                 </table>
             </div>
-
         </div>
     </main>
 
@@ -210,59 +227,58 @@
             </div>
 
             <div id="orderFields">
-                <div class="form-group">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">ফাইল আপলোড (অপশনাল)</label>
-                    
-                    <div class="separate-upload-box" id="slot-photo" onclick="document.getElementById('inputPhoto').click()">
-                        <i class="fas fa-image upload-icon"></i>
-                        <span class="upload-text">ছবি আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewPhoto" class="upload-preview-mini">
-                        </div>
-                        <span class="upload-status" id="statusPhoto">কোনো ফাইল নেই</span>
-                        <input type="file" id="inputPhoto" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewPhoto', 'statusPhoto', 'photo')">
-                    </div>
-
-                    <div class="separate-upload-box" id="slot-frame" onclick="document.getElementById('inputFrame').click()">
-                        <i class="fas fa-crop-alt upload-icon"></i>
-                        <span class="upload-text">ফ্রেম আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewFrame" class="upload-preview-mini">
-                        </div>
-                        <span class="upload-status" id="statusFrame">কোনো ফাইল নেই</span>
-                        <input type="file" id="inputFrame" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewFrame', 'statusFrame', 'frame')">
-                    </div>
-
-                    <div class="separate-upload-box" id="slot-seal" onclick="document.getElementById('inputSeal').click()">
-                        <i class="fas fa-stamp upload-icon"></i>
-                        <span class="upload-text">সিল আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
-                            <img id="previewSeal" class="upload-preview-mini">
-                        </div>
-                        <span class="upload-status" id="statusSeal">কোনো ফাইল নেই</span>
-                        <input type="file" id="inputSeal" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewSeal', 'statusSeal', 'seal')">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সাইজ (Size)</label>
-                    <select id="inputSize" class="form-input">
-                        <option value="">সিলেক্ট করুন</option>
-                        <option value="PASSPORT SIZE">PASSPORT SIZE</option>
-                        <option value="STAMP">STAMP</option>
-                        <option value="3 R">3 R</option>
-                        <option value="4 R">4 R</option>
-                        <option value="5 R">5 R</option>
-                        <option value="8 R">8 R</option>
-                        <option value="10 R">10 R</option>
-                        <option value="12 R">12 R</option>
-                        <option value="10 L">10 L</option>
-                        <option value="A4">A4</option>
-                        <option value="Legal">Legal</option>
+                <div class="form-group" id="onlineServiceDiv" style="display: none;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কাজের ধরন সিলেক্ট করুন</label>
+                    <select id="inputService" class="form-input" onchange="checkOnlineService()">
+                        <option value="">সিলেক্ট করুন...</option>
+                        <option value="কম্পিউটার কম্পোজ">কম্পিউটার কম্পোজ</option>
+                        <option value="ই-মেইল">ই-মেইল</option>
+                        <option value="ভোটার আইডি">ভোটার আইডি</option>
+                        <option value="জন্ম নিবন্ধন">জন্ম নিবন্ধন</option>
+                        <option value="ই-টিন">ই-টিন</option>
+                        <option value="আয়কর রিটার্ন দাখিল">আয়কর রিটার্ন দাখিল</option>
+                        <option value="কলেজ ও বিশ্ববিদ্যালয়ের ভর্তি আবেদন">কলেজ ও বিশ্ববিদ্যালয়ের ভর্তি আবেদন</option>
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="fileUploadContainer">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">ফাইল আপলোড (অপশনাল)</label>
+                    <div class="separate-upload-box" id="slot-photo" onclick="document.getElementById('inputPhoto').click()">
+                        <i class="fas fa-image upload-icon"></i> <span class="upload-text">ছবি আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewPhoto" class="upload-preview-mini"></div>
+                        <span class="upload-status" id="statusPhoto">কোনো ফাইল নেই</span>
+                        <input type="file" id="inputPhoto" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewPhoto', 'statusPhoto', 'photo')">
+                    </div>
+                    <div class="separate-upload-box" id="slot-frame" onclick="document.getElementById('inputFrame').click()">
+                        <i class="fas fa-crop-alt upload-icon"></i> <span class="upload-text">ফ্রেম আপলোড করুন (অপশনাল)</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewFrame" class="upload-preview-mini"></div>
+                        <span class="upload-status" id="statusFrame">কোনো ফাইল নেই</span>
+                        <input type="file" id="inputFrame" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewFrame', 'statusFrame', 'frame')">
+                    </div>
+                </div>
+
+                <div class="form-group" id="frameOptions" style="display: none;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কাজের ধরন</label>
+                    <div class="option-group">
+                        <label class="option-label"><input type="radio" name="frameType" value="ফ্রেম (Frame)" checked> ফ্রেম (Frame)</label>
+                        <label class="option-label"><input type="radio" name="frameType" value="লেমিনেটিং (Laminating)"> লেমিনেটিং</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="sealOptions" style="display: none;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সিলের আকৃতি</label>
+                    <div class="seal-options">
+                        <label class="seal-option-label"><input type="radio" name="sealShape" value="গোল (Round)" checked> গোল (Round)</label>
+                        <label class="seal-option-label"><input type="radio" name="sealShape" value="লাম্বা (Long)"> লাম্বা (Long)</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="sizeContainer">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সাইজ (Size)</label>
+                    <select id="inputSize" class="form-input"><option value="">সিলেক্ট করুন</option></select>
+                </div>
+
+                <div class="form-group" id="copiesContainer">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কত কপি?</label>
                     <input type="number" id="inputCopies" class="form-input" placeholder="যেমন: ২ বা ৫">
                 </div>
@@ -286,12 +302,8 @@
         <div class="modal-box" style="width: auto; max-width: 90%; text-align: center;">
             <i class="fas fa-times modal-close" onclick="document.getElementById('imageViewerModal').style.display='none'"></i>
             <img id="fullSizeImage" src="" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">
-            <br>
-            <p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p>
-            <br>
-            <a id="downloadLink" href="" download="image.png" class="download-btn">
-                <i class="fas fa-download"></i> ডাউনলোড করুন
-            </a>
+            <br><p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p><br>
+            <a id="downloadLink" href="" download="image.png" class="download-btn"><i class="fas fa-download"></i> ডাউনলোড করুন</a>
         </div>
     </div>
 
@@ -299,7 +311,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // আপনার দেওয়া কনফিগারেশন
+        // আপনার ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyBWeWCxj1Ptk6t3SF_UEeJBQhxRH3NsrUI",
             authDomain: "studiomanager-7b701.firebaseapp.com",
@@ -315,38 +327,90 @@
         const db = getDatabase(app);
         const transactionsRef = ref(db, 'studio_transactions');
 
-        // গ্লোবাল ভেরিয়েবল
         let transactions = [];
         let doughnutChartInstance = null;
         let currentCategory = 'photo'; 
-        let tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
+        let tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null } };
+        let currentReportDate = new Date(); 
 
         window.switchSection = function(category) {
             currentCategory = category;
             closeSidebar();
             
-            const titles = { 'photo': 'ছবি ড্যাশবোর্ড', 'frame': 'ফ্রেম ড্যাশবোর্ড', 'seal': 'সিল ড্যাশবোর্ড', 'project': 'প্রজেক্ট ড্যাশবোর্ড', 'expense': 'ব্যয় ব্যবস্থাপনা' };
-            const btnTitles = { 'photo': 'নতুন ছবির অর্ডার?', 'frame': 'নতুন ফ্রেম অর্ডার?', 'seal': 'নতুন সিল অর্ডার?', 'project': 'নতুন প্রজেক্ট?', 'expense': 'নতুন খরচ?' };
+            const titles = { 'photo': 'ছবি ড্যাশবোর্ড', 'frame': 'ফ্রেম ও লেমিনেটিং', 'seal': 'সিল ড্যাশবোর্ড', 'photocopy': 'ফটোকপি ড্যাশবোর্ড', 'online': 'অনলাইন কাজ', 'expense': 'ব্যয় ব্যবস্থাপনা', 'report': 'মাসিক মোট হিসাব' };
+            const btnTitles = { 'photo': 'নতুন ছবির অর্ডার?', 'frame': 'নতুন ফ্রেম/লেমিনেটিং?', 'seal': 'নতুন সিল অর্ডার?', 'photocopy': 'নতুন ফটোকপি অর্ডার?', 'online': 'নতুন অনলাইন কাজ?', 'expense': 'নতুন খরচ?' };
             
             document.getElementById('sectionTitle').innerText = titles[category];
-            document.getElementById('btnTitleText').innerText = btnTitles[category];
-            document.getElementById('tableTitle').innerText = `সাম্প্রতিক ${titles[category].split(' ')[0]} তালিকা`;
-            document.getElementById('modalTitle').innerText = category === 'expense' ? 'নতুন খরচ' : 'নতুন অর্ডার';
+            
+            if(category === 'report') {
+                document.getElementById('mainDashboardStats').style.display = 'none'; 
+                document.getElementById('reportNavigation').style.display = 'flex'; 
+                document.getElementById('tableTitle').innerText = "পুরো মাসের হিসাব (১-৩১ তারিখ)";
+                updateReportLabel();
+            } else {
+                document.getElementById('mainDashboardStats').style.display = 'grid'; 
+                document.getElementById('reportNavigation').style.display = 'none'; 
+                document.getElementById('btnTitleText').innerText = btnTitles[category];
+                document.getElementById('tableTitle').innerText = `সাম্প্রতিক ${titles[category].split(' ')[0]} তালিকা`;
+                document.getElementById('modalTitle').innerText = category === 'expense' ? 'নতুন খরচ' : 'নতুন অর্ডার';
+            }
 
             document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
             document.getElementById(`nav-${category}`).classList.add('active');
 
-            loadDashboardData();
+            if(category === 'report') loadMonthlyReport();
+            else loadDashboardData();
+        }
+
+        // --- নতুন ফাংশন: অনলাইন কাজের চেক ---
+        window.checkOnlineService = function() {
+            const service = document.getElementById('inputService').value;
+            const sizeContainer = document.getElementById('sizeContainer');
+            const inputSize = document.getElementById('inputSize');
+
+            // যদি কম্পিউটার কম্পোজ হয়, তাহলে সাইজ দেখাবে
+            if (currentCategory === 'online' && service === 'কম্পিউটার কম্পোজ') {
+                sizeContainer.style.display = 'block';
+                inputSize.innerHTML = `
+                    <option value="">সাইজ সিলেক্ট করুন</option>
+                    <option value="5R">5R</option>
+                    <option value="A4">A4</option>
+                    <option value="Legal">Legal</option>
+                `;
+            } else if (currentCategory === 'online') {
+                // অন্য কাজের জন্য সাইজ হাইড
+                sizeContainer.style.display = 'none';
+            }
         }
 
         window.processTransaction = function() {
             const date = document.getElementById('inputDate').value;
-            const desc = document.getElementById('inputDesc').value;
+            let desc = document.getElementById('inputDesc').value;
             const amount = parseFloat(document.getElementById('inputAmount').value);
             
             let size = '', copies = '';
-            if(currentCategory !== 'expense') {
-                size = document.getElementById('inputSize').value;
+            
+            if(currentCategory === 'online') {
+                const service = document.getElementById('inputService').value;
+                if(service) desc = service + (desc ? " - " + desc : "");
+                
+                // কম্পিউটার কম্পোজ হলে সাইজ নিবে
+                if(service === 'কম্পিউটার কম্পোজ' && document.getElementById('sizeContainer').style.display !== 'none') {
+                    size = document.getElementById('inputSize').value;
+                }
+            }
+
+            if(currentCategory !== 'expense' && currentCategory !== 'online') {
+                if(currentCategory === 'seal') {
+                    const shape = document.querySelector('input[name="sealShape"]:checked');
+                    size = shape ? shape.value : 'গোল';
+                } else if (currentCategory === 'frame') {
+                    const type = document.querySelector('input[name="frameType"]:checked');
+                    if(type) desc = `[${type.value}] ` + desc;
+                    size = document.getElementById('inputSize').value;
+                } else {
+                    size = document.getElementById('inputSize').value;
+                }
                 copies = document.getElementById('inputCopies').value;
             }
 
@@ -359,18 +423,16 @@
             const newTx = { 
                 category: currentCategory, 
                 date, type, desc, size, copies, amount, 
-                images: currentCategory === 'expense' ? {} : { ...tempImages }, 
+                images: (currentCategory === 'photo' || currentCategory === 'frame') ? { ...tempImages } : {}, 
                 isChecked: false 
             };
             
-            push(transactionsRef, newTx)
-                .then(() => {
-                    alert("ডাটা অনলাইনে সেভ হয়েছে!");
-                    toggleModal(false);
-                })
-                .catch((error) => {
-                    alert("ডাটাবেস এরর: " + error.message);
-                });
+            push(transactionsRef, newTx).then(() => {
+                alert("ডাটা অনলাইনে সেভ হয়েছে!");
+                toggleModal(false);
+            }).catch((error) => {
+                alert("এরর: " + error.message);
+            });
         }
 
         window.deleteTransaction = function(id) {
@@ -385,7 +447,6 @@
             update(itemRef, { isChecked: !currentStatus });
         }
 
-        // --- UI হেল্পার ফাংশন ---
         window.openSidebar = function() { document.getElementById('mainSidebar').classList.add('active'); document.getElementById('sidebarOverlay').style.display = 'block'; }
         window.closeSidebar = function() { document.getElementById('mainSidebar').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
         
@@ -394,38 +455,75 @@
             modal.style.display = show ? 'flex' : 'none';
             if(show) {
                 document.getElementById('inputDate').valueAsDate = new Date();
-                ['inputPhoto', 'inputFrame', 'inputSeal', 'inputSize', 'inputCopies', 'inputDesc', 'inputAmount'].forEach(id => document.getElementById(id).value = '');
-                ['previewPhoto', 'previewFrame', 'previewSeal'].forEach(id => document.getElementById(id).style.display = 'none');
-                ['statusPhoto', 'statusFrame', 'statusSeal'].forEach(id => { document.getElementById(id).innerText = 'কোনো ফাইল নেই'; document.getElementById(id).style.color = '#888'; });
+                ['inputPhoto', 'inputFrame', 'inputCopies', 'inputDesc', 'inputAmount', 'inputService'].forEach(id => {
+                    if(document.getElementById(id)) document.getElementById(id).value = '';
+                });
+                ['previewPhoto', 'previewFrame'].forEach(id => document.getElementById(id).style.display = 'none');
+                ['statusPhoto', 'statusFrame'].forEach(id => { document.getElementById(id).innerText = 'কোনো ফাইল নেই'; document.getElementById(id).style.color = '#888'; });
                 
-                const orderFields = document.getElementById('orderFields');
-                if(currentCategory === 'expense') {
-                    orderFields.style.display = 'none';
-                } else {
-                    orderFields.style.display = 'block';
-                    document.getElementById('slot-photo').style.display = 'none';
-                    document.getElementById('slot-frame').style.display = 'none';
-                    document.getElementById('slot-seal').style.display = 'none';
+                updateFormUI(); 
+                tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null } };
+            }
+        }
 
-                    if(currentCategory === 'photo') document.getElementById('slot-photo').style.display = 'flex';
-                    else if(currentCategory === 'frame') document.getElementById('slot-frame').style.display = 'flex';
-                    else if(currentCategory === 'seal') document.getElementById('slot-seal').style.display = 'flex';
-                    else if(currentCategory === 'project') {
-                        document.getElementById('slot-photo').style.display = 'flex';
-                        document.getElementById('slot-frame').style.display = 'flex';
-                        document.getElementById('slot-seal').style.display = 'flex';
-                    }
+        function updateFormUI() {
+            const orderFields = document.getElementById('orderFields');
+            const fileContainer = document.getElementById('fileUploadContainer');
+            const sealOptions = document.getElementById('sealOptions');
+            const frameOptions = document.getElementById('frameOptions');
+            const sizeContainer = document.getElementById('sizeContainer');
+            const inputSize = document.getElementById('inputSize');
+            const onlineServiceDiv = document.getElementById('onlineServiceDiv');
+            const copiesContainer = document.getElementById('copiesContainer');
+
+            // সব হাইড
+            orderFields.style.display = 'none';
+            fileContainer.style.display = 'none';
+            sealOptions.style.display = 'none';
+            frameOptions.style.display = 'none';
+            sizeContainer.style.display = 'none';
+            onlineServiceDiv.style.display = 'none';
+            copiesContainer.style.display = 'none';
+            document.getElementById('slot-photo').style.display = 'none';
+            document.getElementById('slot-frame').style.display = 'none';
+
+            if(currentCategory !== 'expense') {
+                orderFields.style.display = 'block';
+                
+                if(currentCategory === 'online') {
+                    onlineServiceDiv.style.display = 'block';
+                    // সাইজ কন্টেইনার শুরুতে হাইড থাকবে, checkOnlineService() এটা হ্যান্ডেল করবে
+                } 
+                else if(currentCategory === 'seal') {
+                    sealOptions.style.display = 'block';
+                    copiesContainer.style.display = 'block';
+                } 
+                else if(currentCategory === 'photocopy') {
+                    sizeContainer.style.display = 'block';
+                    copiesContainer.style.display = 'block';
+                    inputSize.innerHTML = `<option value="A4">A4</option><option value="Legal">Legal</option><option value="A-5R">A-5R</option>`;
                 }
-                tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
+                else if(currentCategory === 'frame') {
+                    fileContainer.style.display = 'block';
+                    document.getElementById('slot-frame').style.display = 'flex';
+                    frameOptions.style.display = 'block'; 
+                    sizeContainer.style.display = 'block';
+                    inputSize.innerHTML = `<option value="3 R (3.5 X 5)">3 R (3.5"X5")</option><option value="4 R (4 X 6)">4 R (4"X6")</option><option value="5 R (5 X 7)">5 R (5"X7")</option><option value="8 R (8 X 10)">8 R (8"X10")</option><option value="10 R (10 X 12)">10 R (10"X12")</option><option value="10 L (10 X 15)">10 L (10"X15")</option><option value="12 R (12 X 16)">12 R (12"X16")</option><option value="14 R (14 X 20)">14 R (14"X20")</option><option value="20 R (20 X 24)">20 R (20"X24")</option><option value="20 L (20 X 30)">20 L (20"X30")</option><option value="30 R (30 X 40)">30 R (30"X40")</option>`;
+                }
+                else if(currentCategory === 'photo') {
+                    fileContainer.style.display = 'block';
+                    document.getElementById('slot-photo').style.display = 'flex';
+                    sizeContainer.style.display = 'block';
+                    copiesContainer.style.display = 'block';
+                    inputSize.innerHTML = `<option value="PASSPORT SIZE">PASSPORT SIZE</option><option value="STAMP">STAMP</option><option value="3 R">3 R</option><option value="4 R">4 R</option><option value="5 R">5 R</option><option value="8 R">8 R</option><option value="10 R">10 R</option><option value="10 L">10 L</option><option value="12 R">12 R</option><option value="A4">A4</option><option value="Legal">Legal</option>`;
+                }
             }
         }
 
         window.previewImage = function(input, previewId, statusId, type) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                if(file.size > 800000) { // 800KB Limit
-                    alert("সতর্কতা: বড় ফাইল ডাটাবেস স্লো করতে পারে। ছোট ছবি দিন।");
-                }
+                if(file.size > 800000) { alert("সতর্কতা: বড় ফাইল ডাটাবেস স্লো করতে পারে।"); }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById(previewId).src = e.target.result;
@@ -454,12 +552,21 @@
         window.downloadCSV = function() {
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
             if(currentCategory === 'expense') { csvContent += "তারিখ,বিবরণ,পরিমাণ (টাকা)\n"; } 
+            else if(currentCategory === 'report') { csvContent += "বিভাগ,তারিখ,বিবরণ,পরিমাণ (টাকা),ধরন\n"; }
             else { csvContent += "তারিখ,বিবরণ,সাইজ,কপি,পরিমাণ (টাকা),অবস্থা\n"; }
 
-            let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
+            let filteredTransactions;
+            if(currentCategory === 'report') {
+                const monthStr = currentReportDate.toISOString().slice(0, 7); 
+                filteredTransactions = transactions.filter(tx => tx.date.startsWith(monthStr));
+            } else {
+                filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
+            }
+
             filteredTransactions.forEach(function(row) {
                 let rowData = [];
                 if(currentCategory === 'expense') { rowData = [row.date, `"${row.desc}"`, row.amount]; } 
+                else if(currentCategory === 'report') { rowData = [row.category, row.date, `"${row.desc}"`, row.amount, row.type]; }
                 else { rowData = [row.date, `"${row.desc}"`, `"${row.size || ''}"`, `"${row.copies || ''}"`, row.amount, row.isChecked ? "সম্পন্ন" : "অসম্পন্ন"]; }
                 csvContent += rowData.join(",") + "\r\n";
             });
@@ -471,25 +578,57 @@
             link.click();
         }
 
-        window.clearAllData = function() {
-            // সতর্কতার সাথে ব্যবহার করতে হবে, ডাটাবেস থেকে সব ডিলিট করার ফাংশন এখানে ডিজেবল রাখা ভালো
-            alert("নিরাপত্তার জন্য 'সব রিসেট' অপশনটি অনলাইনে বন্ধ রাখা হয়েছে।");
+        window.clearAllData = function() { alert("নিরাপত্তার জন্য অনলাইন রিসেট বন্ধ রাখা হয়েছে।"); }
+
+        window.changeMonth = function(offset) {
+            currentReportDate.setMonth(currentReportDate.getMonth() + offset);
+            updateReportLabel();
+            loadMonthlyReport();
+        }
+
+        function updateReportLabel() {
+            const options = { year: 'numeric', month: 'long' };
+            document.getElementById('currentMonthLabel').innerText = currentReportDate.toLocaleDateString('en-US', options);
+        }
+
+        function loadMonthlyReport() {
+            const tableBody = document.getElementById('transactionTableBody');
+            tableBody.innerHTML = '';
+            
+            const monthStr = currentReportDate.toISOString().slice(0, 7); 
+            let monthTransactions = transactions.filter(tx => tx.date.startsWith(monthStr));
+            monthTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            monthTransactions.forEach(tx => {
+                const amountColor = tx.type === 'income' ? 'var(--success)' : 'var(--danger)';
+                const sign = tx.type === 'income' ? '+' : '-';
+                
+                const row = `<tr>
+                    <td class="checkbox-col">-</td>
+                    <td>
+                        <div style="font-weight:600;">${tx.desc}</div>
+                        <div style="font-size:11px;color:#888;">${tx.category.toUpperCase()}</div>
+                    </td>
+                    <td style="color: #8D8179;">${new Date(tx.date).toLocaleDateString('bn-BD')}</td>
+                    <td style="font-weight: 600; color:${amountColor}">${sign}${tx.amount.toLocaleString()} ৳</td>
+                    <td>-</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
         }
 
         function loadDashboardData() {
+            if(currentCategory === 'report') { loadMonthlyReport(); return; }
+
             const todayStr = new Date().toISOString().split('T')[0];
             const tableBody = document.getElementById('transactionTableBody');
             
-            // রিয়েলটাইম ডাটা লিসেনার
             onValue(transactionsRef, (snapshot) => {
                 const data = snapshot.val();
                 transactions = [];
-                
-                if (data) {
-                    Object.keys(data).forEach(key => {
-                        transactions.push({ id: key, ...data[key] });
-                    });
-                }
+                if (data) { Object.keys(data).forEach(key => { transactions.push({ id: key, ...data[key] }); }); }
+
+                if(currentCategory === 'report') { loadMonthlyReport(); return; } 
 
                 let totalIncome = 0, totalExpense = 0, todaySum = 0;
                 tableBody.innerHTML = '';
@@ -510,11 +649,12 @@
                     if(currentCategory !== 'expense') {
                         const sizeHtml = tx.size ? `<span style="font-size:11px;font-weight:bold;color:var(--accent-brown);background:#f0e6dd;padding:2px 5px;border-radius:4px;">${tx.size}</span>` : '';
                         const copiesHtml = tx.copies ? `<span class="copy-badge">${tx.copies} কপি</span>` : '';
+                        
                         let filesHtml = '<div class="file-badges">';
                         if (tx.images.photo && tx.images.photo.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.photo.base64}', '${tx.images.photo.name}')"><i class="fas fa-image"></i> ছবি</div>`;
                         if (tx.images.frame && tx.images.frame.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.frame.base64}', '${tx.images.frame.name}')"><i class="fas fa-crop-alt"></i> ফ্রেম</div>`;
-                        if (tx.images.seal && tx.images.seal.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.seal.base64}', '${tx.images.seal.name}')"><i class="fas fa-stamp"></i> সিল</div>`;
                         filesHtml += '</div>';
+
                         detailsHtml = `<div class="item-info"><div style="font-weight: 600;">${sizeHtml} ${copiesHtml}</div><div style="font-size:12px;color:#555;">${tx.desc}</div>${filesHtml}</div>`;
                     } else {
                         detailsHtml = `<div style="font-weight:600; color:#e74c3c;">${tx.desc}</div>`;
