@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্টুডিও অনলাইন ম্যানেজার (৩ পিসি)</title>
+    <title>স্টুডিও অনলাইন ম্যানেজার (লাইভ)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* আগের সব CSS স্টাইল হুবহু একই থাকবে */
+        /* CSS ডিজাইন */
         :root { --bg-main: #F8F6F2; --bg-sidebar: #FFFFFF; --bg-card: #FFFFFF; --text-primary: #3E3229; --text-secondary: #8D8179; --accent-brown: #5B4A42; --accent-gold: #C69C6D; --success: #27ae60; --danger: #e74c3c; --shadow-soft: 0 5px 20px rgba(62, 50, 41, 0.05); --border-radius-card: 16px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; }
@@ -97,11 +97,13 @@
             <span><i class="fas fa-camera"></i> স্টুডিও অনলাইন</span>
             <i class="fas fa-times close-sidebar" onclick="closeSidebar()" style="display: block;"></i>
         </div>
+        
         <div class="menu-label" style="margin-bottom:10px;font-size:12px;color:#888;">ওয়ার্ক সেকশন</div>
         <a class="menu-link active" onclick="switchSection('photo')" id="nav-photo"><i class="fas fa-image"></i> ছবি (Photo)</a>
         <a class="menu-link" onclick="switchSection('frame')" id="nav-frame"><i class="fas fa-crop-alt"></i> ফ্রেম (Frame)</a>
         <a class="menu-link" onclick="switchSection('seal')" id="nav-seal"><i class="fas fa-stamp"></i> সিল (Seal)</a>
         <a class="menu-link" onclick="switchSection('project')" id="nav-project"><i class="fas fa-briefcase"></i> প্রজেক্ট (Project)</a>
+        
         <div class="menu-label" style="margin-top: 20px; margin-bottom:10px;font-size:12px;color:#888;">হিসাব সেকশন</div>
         <a class="menu-link" onclick="switchSection('expense')" id="nav-expense" style="color: #e74c3c;"><i class="fas fa-money-bill-wave"></i> অফিস খরচ (Expense)</a>
     </nav>
@@ -114,11 +116,12 @@
             </div>
             <div class="user-info">
                 <h4>অ্যাডমিন</h4>
-                <span>অনলাইন (3 PC Sync)</span>
+                <span>অনলাইন (Connected)</span>
             </div>
         </header>
 
         <div class="printable">
+            
             <div class="dashboard-top-grid">
                 <div class="stats-panel">
                     <div class="stats-cards">
@@ -153,6 +156,7 @@
                         </div>
                         <button class="btn-primary" onclick="toggleModal(true)">+ যুক্ত করুন</button>
                     </div>
+
                     <div class="card">
                         <div class="chart-header"><h3>আজকের অবস্থা</h3></div>
                         <div class="gauge-container">
@@ -191,6 +195,7 @@
                     <tbody id="transactionTableBody"></tbody>
                 </table>
             </div>
+
         </div>
     </main>
 
@@ -198,51 +203,81 @@
         <div class="modal-box">
             <i class="fas fa-times modal-close" onclick="toggleModal(false)"></i>
             <h3 style="margin-bottom: 20px; color: var(--accent-brown);" id="modalTitle">নতুন এন্ট্রি</h3>
+            
             <div class="form-group">
                 <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">তারিখ</label>
                 <input type="date" id="inputDate" class="form-input">
             </div>
+
             <div id="orderFields">
                 <div class="form-group">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">ফাইল আপলোড (অপশনাল)</label>
+                    
                     <div class="separate-upload-box" id="slot-photo" onclick="document.getElementById('inputPhoto').click()">
-                        <i class="fas fa-image upload-icon"></i> <span class="upload-text">ছবি আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewPhoto" class="upload-preview-mini"></div>
+                        <i class="fas fa-image upload-icon"></i>
+                        <span class="upload-text">ছবি আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
+                            <img id="previewPhoto" class="upload-preview-mini">
+                        </div>
                         <span class="upload-status" id="statusPhoto">কোনো ফাইল নেই</span>
                         <input type="file" id="inputPhoto" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewPhoto', 'statusPhoto', 'photo')">
                     </div>
+
                     <div class="separate-upload-box" id="slot-frame" onclick="document.getElementById('inputFrame').click()">
-                        <i class="fas fa-crop-alt upload-icon"></i> <span class="upload-text">ফ্রেম আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewFrame" class="upload-preview-mini"></div>
+                        <i class="fas fa-crop-alt upload-icon"></i>
+                        <span class="upload-text">ফ্রেম আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
+                            <img id="previewFrame" class="upload-preview-mini">
+                        </div>
                         <span class="upload-status" id="statusFrame">কোনো ফাইল নেই</span>
                         <input type="file" id="inputFrame" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewFrame', 'statusFrame', 'frame')">
                     </div>
+
                     <div class="separate-upload-box" id="slot-seal" onclick="document.getElementById('inputSeal').click()">
-                        <i class="fas fa-stamp upload-icon"></i> <span class="upload-text">সিল আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewSeal" class="upload-preview-mini"></div>
+                        <i class="fas fa-stamp upload-icon"></i>
+                        <span class="upload-text">সিল আপলোড করুন</span>
+                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;">
+                            <img id="previewSeal" class="upload-preview-mini">
+                        </div>
                         <span class="upload-status" id="statusSeal">কোনো ফাইল নেই</span>
                         <input type="file" id="inputSeal" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewSeal', 'statusSeal', 'seal')">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সাইজ (Size)</label>
                     <select id="inputSize" class="form-input">
-                        <option value="">সিলেক্ট করুন</option><option value="PASSPORT SIZE">PASSPORT SIZE</option><option value="STAMP">STAMP</option><option value="3 R">3 R</option><option value="4 R">4 R</option><option value="5 R">5 R</option><option value="8 R">8 R</option><option value="10 R">10 R</option><option value="12 R">12 R</option><option value="10 L">10 L</option><option value="A4">A4</option><option value="Legal">Legal</option>
+                        <option value="">সিলেক্ট করুন</option>
+                        <option value="PASSPORT SIZE">PASSPORT SIZE</option>
+                        <option value="STAMP">STAMP</option>
+                        <option value="3 R">3 R</option>
+                        <option value="4 R">4 R</option>
+                        <option value="5 R">5 R</option>
+                        <option value="8 R">8 R</option>
+                        <option value="10 R">10 R</option>
+                        <option value="12 R">12 R</option>
+                        <option value="10 L">10 L</option>
+                        <option value="A4">A4</option>
+                        <option value="Legal">Legal</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কত কপি?</label>
                     <input type="number" id="inputCopies" class="form-input" placeholder="যেমন: ২ বা ৫">
                 </div>
             </div>
+
             <div class="form-group">
                 <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">বিবরণ</label>
                 <input type="text" id="inputDesc" class="form-input" placeholder="লিখুন...">
             </div>
+
             <div class="form-group">
                 <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">পরিমাণ (টাকা)</label>
                 <input type="number" id="inputAmount" class="form-input" placeholder="০০০">
             </div>
+            
             <button class="btn-primary" style="width: 100%; background: var(--accent-brown);" onclick="processTransaction()">সংরক্ষণ করুন</button>
         </div>
     </div>
@@ -251,72 +286,31 @@
         <div class="modal-box" style="width: auto; max-width: 90%; text-align: center;">
             <i class="fas fa-times modal-close" onclick="document.getElementById('imageViewerModal').style.display='none'"></i>
             <img id="fullSizeImage" src="" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">
-            <br><p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p><br>
-            <a id="downloadLink" href="" download="image.png" class="download-btn"><i class="fas fa-download"></i> ডাউনলোড করুন</a>
+            <br>
+            <p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p>
+            <br>
+            <a id="downloadLink" href="" download="image.png" class="download-btn">
+                <i class="fas fa-download"></i> ডাউনলোড করুন
+            </a>
         </div>
     </div>
 
     <script type="module">
-        // Firebase মডিউল ইমপোর্ট
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ==========================================
-        // ধাপ ৩: এখানে আপনার Firebase কনফিগারেশন বসান
-        // ==========================================
+        // আপনার দেওয়া কনফিগারেশন
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_// Import the functions you need from the SDKs you need
-
-import { initializeApp } from "firebase/app";
-
-import { getAnalytics } from "firebase/analytics";
-
-// TODO: Add SDKs for Firebase products that you want to use
-
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-
-
-// Your web app's Firebase configuration
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyBWeWCxj1Ptk6t3SF_UEeJBQhxRH3NsrUI",
-
-  authDomain: "studiomanager-7b701.firebaseapp.com",
-
-  databaseURL: "https://studiomanager-7b701-default-rtdb.firebaseio.com",
-
-  projectId: "studiomanager-7b701",
-
-  storageBucket: "studiomanager-7b701.firebasestorage.app",
-
-  messagingSenderId: "490671078365",
-
-  appId: "1:490671078365:web:35bf071bf954a3174b9434",
-
-  measurementId: "G-YEQ84W1NVB"
-
-};
-
-
-
-// Initialize Firebase
-
-const app = initializeApp(firebaseConfig);
-
-const analytics = getAnalytics(app);"
+            apiKey: "AIzaSyBWeWCxj1Ptk6t3SF_UEeJBQhxRH3NsrUI",
+            authDomain: "studiomanager-7b701.firebaseapp.com",
+            databaseURL: "https://studiomanager-7b701-default-rtdb.firebaseio.com",
+            projectId: "studiomanager-7b701",
+            storageBucket: "studiomanager-7b701.firebasestorage.app",
+            messagingSenderId: "490671078365",
+            appId: "1:490671078365:web:35bf071bf954a3174b9434",
+            measurementId: "G-YEQ84W1NVB"
         };
 
-        // Firebase Initialize
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const transactionsRef = ref(db, 'studio_transactions');
@@ -324,10 +318,9 @@ const analytics = getAnalytics(app);"
         // গ্লোবাল ভেরিয়েবল
         let transactions = [];
         let doughnutChartInstance = null;
-        let currentCategory = 'photo';
+        let currentCategory = 'photo'; 
         let tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null }, seal: { base64: null, name: null } };
 
-        // --- উইন্ডো গ্লোবাল ফাংশন এক্সপোজ (HTML onclick এর জন্য) ---
         window.switchSection = function(category) {
             currentCategory = category;
             closeSidebar();
@@ -370,19 +363,18 @@ const analytics = getAnalytics(app);"
                 isChecked: false 
             };
             
-            // Firebase এ ডাটা পাঠানো
             push(transactionsRef, newTx)
                 .then(() => {
-                    alert("ডাটা সফলভাবে সেভ হয়েছে (অনলাইন)");
+                    alert("ডাটা অনলাইনে সেভ হয়েছে!");
                     toggleModal(false);
                 })
                 .catch((error) => {
-                    alert("এরর: " + error.message);
+                    alert("ডাটাবেস এরর: " + error.message);
                 });
         }
 
         window.deleteTransaction = function(id) {
-            if(confirm("মুছে ফেলতে চান? এটি সব পিসি থেকে মুছে যাবে!")) {
+            if(confirm("মুছে ফেলতে চান?")) {
                 const itemRef = ref(db, `studio_transactions/${id}`);
                 remove(itemRef);
             }
@@ -393,7 +385,7 @@ const analytics = getAnalytics(app);"
             update(itemRef, { isChecked: !currentStatus });
         }
 
-        // --- সাধারণ ফাংশন ---
+        // --- UI হেল্পার ফাংশন ---
         window.openSidebar = function() { document.getElementById('mainSidebar').classList.add('active'); document.getElementById('sidebarOverlay').style.display = 'block'; }
         window.closeSidebar = function() { document.getElementById('mainSidebar').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
         
@@ -431,9 +423,8 @@ const analytics = getAnalytics(app);"
         window.previewImage = function(input, previewId, statusId, type) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                // ফাইলের সাইজ চেক (লিমিট ১ মেগাবাইট রাখা ভালো ফ্রি ডাটাবেসের জন্য)
-                if(file.size > 1000000) {
-                    alert("সতর্কতা: ১ মেগাবাইটের বেশি ফাইল আপলোড করলে ডাটাবেস স্লো হতে পারে!");
+                if(file.size > 800000) { // 800KB Limit
+                    alert("সতর্কতা: বড় ফাইল ডাটাবেস স্লো করতে পারে। ছোট ছবি দিন।");
                 }
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -480,24 +471,26 @@ const analytics = getAnalytics(app);"
             link.click();
         }
 
-        // --- ডাটা লোড এবং রিয়েলটাইম লিসেনার ---
+        window.clearAllData = function() {
+            // সতর্কতার সাথে ব্যবহার করতে হবে, ডাটাবেস থেকে সব ডিলিট করার ফাংশন এখানে ডিজেবল রাখা ভালো
+            alert("নিরাপত্তার জন্য 'সব রিসেট' অপশনটি অনলাইনে বন্ধ রাখা হয়েছে।");
+        }
+
         function loadDashboardData() {
             const todayStr = new Date().toISOString().split('T')[0];
             const tableBody = document.getElementById('transactionTableBody');
             
-            // রিয়েলটাইম লিসেনার
+            // রিয়েলটাইম ডাটা লিসেনার
             onValue(transactionsRef, (snapshot) => {
                 const data = snapshot.val();
                 transactions = [];
                 
-                // ডাটা অবজেক্ট থেকে অ্যারেতে রূপান্তর
                 if (data) {
                     Object.keys(data).forEach(key => {
                         transactions.push({ id: key, ...data[key] });
                     });
                 }
 
-                // ইউআই আপডেট
                 let totalIncome = 0, totalExpense = 0, todaySum = 0;
                 tableBody.innerHTML = '';
 
@@ -547,7 +540,6 @@ const analytics = getAnalytics(app);"
             });
         }
 
-        // ইনিশিয়াল লোড
         loadDashboardData();
     </script>
 
