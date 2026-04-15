@@ -1,687 +1,235 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্টুডিও ম্যানেজার - V11 (Online Update)</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>Fuji Color Lab - Billing System</title>
     <style>
-        /* CSS স্টাইল আগের মতোই */
-        :root { --bg-main: #F8F6F2; --bg-sidebar: #FFFFFF; --bg-card: #FFFFFF; --text-primary: #3E3229; --text-secondary: #8D8179; --accent-brown: #5B4A42; --accent-gold: #C69C6D; --success: #27ae60; --danger: #e74c3c; --shadow-soft: 0 5px 20px rgba(62, 50, 41, 0.05); --border-radius-card: 16px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; }
-        .sidebar { position: fixed; left: -260px; top: 0; height: 100%; width: 260px; background: var(--bg-sidebar); padding: 25px; z-index: 1000; border-right: 1px solid #eee; transition: 0.3s ease-in-out; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
-        .sidebar.active { left: 0; }
-        .brand { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-        .close-sidebar { cursor: pointer; font-size: 20px; color: var(--danger); display: none; }
-        .menu-link { display: flex; align-items: center; padding: 12px 15px; color: var(--text-secondary); text-decoration: none; margin-bottom: 8px; border-radius: 12px; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .menu-link:hover, .menu-link.active { background-color: var(--accent-brown); color: white; }
-        .menu-link i { margin-right: 15px; width: 20px; }
-        .main-container { flex: 1; padding: 25px 35px; overflow-y: auto; transition: 0.3s; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .menu-toggle { font-size: 24px; cursor: pointer; color: var(--accent-brown); margin-right: 15px; }
-        .header-left { display: flex; align-items: center; }
-        .user-info h4 { font-size: 14px; font-weight: 600; }
-        .user-info span { font-size: 12px; color: var(--text-secondary); }
-        .dashboard-top-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 30px; margin-bottom: 30px; }
-        .stats-panel { display: flex; flex-direction: column; gap: 30px; }
-        .action-panel { display: flex; flex-direction: column; gap: 30px; }
-        .card { background: var(--bg-card); border-radius: var(--border-radius-card); padding: 20px; box-shadow: var(--shadow-soft); }
-        .stats-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .stat-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 110px; }
-        .stat-head { display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 13px; }
-        .stat-value { font-size: 24px; font-weight: 700; margin: 10px 0; }
-        .stat-trend { font-size: 12px; display: flex; align-items: center; gap: 5px; }
-        .trend-up { color: var(--success); } .trend-down { color: var(--danger); }
-        .full-width-section { margin-top: 20px; }
-        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        th { text-align: left; color: var(--text-secondary); font-weight: 500; padding: 10px 15px; font-size: 13px; }
-        tbody tr { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; }
-        tbody tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-        tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-        td { padding: 15px; border-top: 1px solid #f9f9f9; border-bottom: 1px solid #f9f9f9; vertical-align: middle; background: #fff; }
-        tr.checked-row td { background: #f0fff4; border-color: #e6fffa; }
-        tr.checked-row .item-info, .checked-row .amount-text { opacity: 0.5; text-decoration: line-through; }
-        .custom-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
-        .item-info { display: flex; flex-direction: column; gap: 5px; }
-        .separate-upload-box { border: 2px dashed #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; transition: 0.2s; background: #fafafa; height: 120px; position: relative; }
-        .separate-upload-box:hover { border-color: var(--accent-gold); background: #fffbf5; }
-        .upload-icon { color: var(--accent-gold); font-size: 24px; margin-bottom: 5px; }
-        .upload-text { font-weight: 600; color: var(--text-primary); font-size: 14px; }
-        .upload-preview-mini { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; top:0; left:0; opacity: 0.5; }
-        .upload-status { font-size: 11px; color: #888; margin-top: 5px; z-index: 2; font-weight: bold; }
-        .file-badges { display: flex; gap: 5px; margin-top: 5px; }
-        .file-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; background: #f8f8f8; display: flex; align-items: center; gap: 3px; transition: 0.2s; }
-        .file-badge:hover { background: var(--accent-brown); color: white; border-color: var(--accent-brown); }
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .badge-success { background: #e8f5e9; color: var(--success); }
-        .badge-danger { background: #fbe9e7; color: var(--danger); }
-        .add-btn-card { background: var(--accent-brown); color: white; display: flex; justify-content: space-between; align-items: center; }
-        .btn-primary { background: var(--accent-gold); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
-        .btn-primary:hover { background: #b38b5d; }
-        .action-btn-group { display: flex; gap: 10px; }
-        .btn-outline { background: transparent; border: 1px solid var(--accent-brown); color: var(--accent-brown); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
-        .btn-outline:hover { background: var(--bg-main); }
-        .gauge-container { position: relative; height: 150px; display: flex; justify-content: center; }
-        .gauge-center-text { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; display: none; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; width: 500px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; outline: none; }
-        .download-btn { display: inline-block; padding: 5px 10px; background: var(--accent-brown); color: white; text-decoration: none; border-radius: 5px; font-size: 12px; margin-top: 5px; }
-        .copy-badge { font-size: 11px; color: #fff; background: var(--text-secondary); font-weight: bold; display: inline-block; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
-        .option-group { display: flex; gap: 20px; margin-top: 5px; }
-        .option-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; font-size: 14px; background: #f8f8f8; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 100%; transition: 0.2s; }
-        .option-label:hover { border-color: var(--accent-gold); background: #fff; }
-        .option-label input { accent-color: var(--accent-brown); width: 18px; height: 18px; }
-        .seal-options { display: flex; gap: 20px; margin-top: 5px; }
-        .seal-option-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; font-size: 14px; background: #f8f8f8; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 100%; transition: 0.2s; }
-        .seal-option-label:hover { border-color: var(--accent-gold); background: #fff; }
-        .seal-option-label input { accent-color: var(--accent-brown); width: 18px; height: 18px; }
-        .overlay-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 999; display: none; }
-        .report-nav { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; justify-content: center; }
-        .report-btn { background: var(--bg-card); border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .report-btn:hover { background: var(--accent-brown); color: white; }
-        .report-title { font-size: 18px; font-weight: 700; color: var(--text-primary); min-width: 150px; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .invoice-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 1px solid #ddd; }
+        
+        .header { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 15px; }
+        .company-info h1 { margin: 0; font-size: 28px; font-weight: bold; color: #000; text-transform: uppercase; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #333; }
+        .invoice-details table { border-collapse: collapse; font-size: 13px; }
+        .invoice-details td { padding: 2px 5px; }
+        .invoice-details td:last-child { border-bottom: 1px solid #000; min-width: 100px; text-align: right; font-weight: bold; }
+
+        .bill-to-section { margin-bottom: 15px; }
+        .bill-to-table { border-collapse: collapse; font-size: 14px; width: 100%; }
+        .bill-to-table td { padding: 3px 0; vertical-align: top; }
+
+        .main-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin-top: 5px; }
+        .main-table th { background: #f8f9fa; border: 1px solid #000; padding: 8px; font-weight: bold; }
+        .main-table td { border: 1px solid #000; padding: 6px; }
+        .text-left { text-align: left; padding-left: 10px !important; }
+        .bold { font-weight: bold; }
+
+        #paidSeal {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+            border: 4px double rgba(255, 0, 0, 0.3); color: rgba(255, 0, 0, 0.3);
+            font-size: 60px; font-weight: 900; padding: 5px 20px; border-radius: 12px;
+            display: none; z-index: 5; pointer-events: none; letter-spacing: 5px;
+        }
+
+        .admin-panel { max-width: 800px; margin: 0 auto 20px; background: #1a252f; color: #fff; padding: 20px; border-radius: 8px; }
+        .admin-panel input { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #34495e; width: 130px; background: #2c3e50; color: white; }
+        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; margin: 5px; }
+        .btn-add { background: #27ae60; color: white; }
+        .btn-print { background: #2980b9; color: white; float: right; }
+        
+        .delete-btn { background: #c0392b; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; }
+        .in-words { margin-top: 15px; padding: 8px; border: 1px dashed #000; font-style: italic; font-weight: bold; font-size: 12px; }
 
         @media print {
-            .sidebar, .header, .right-panel, .no-print, .menu-toggle, .report-nav button { display: none !important; }
-            .main-container { padding: 0; overflow: visible; }
-            .dashboard-top-grid { display: none; }
-            body { height: auto; overflow: visible; }
-            .checkbox-col { display: none; }
+            body { background: #fff; padding: 0; }
+            .admin-panel, .no-print { display: none !important; } 
+            .invoice-container { box-shadow: none; padding: 20px; max-width: 100%; border: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay-bg" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="admin-panel">
+    <h3>ফটিকালার ল্যাব এন্ট্রি প্যানেল</h3>
+    <div>
+        <input type="text" id="custName" placeholder="কাস্টমারের নাম">
+        <input type="text" id="custPhone" placeholder="ফোন নম্বর">
+        <input type="text" id="custAddr" placeholder="ঠিকানা">
+    </div>
+    <div style="margin-top: 10px; border-top: 1px solid #34495e; padding-top: 10px;">
+        <input type="text" id="itemName" placeholder="কাজের বিবরণ">
+        <input type="number" id="qty" placeholder="Qty">
+        <input type="number" id="price" placeholder="Rate (দর)">
+        <input type="number" id="fixedTotal" placeholder="টাকা (সরাসরি)">
+        <button class="btn btn-add" onclick="addItem()">যোগ করুন</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <label>পরিশোধ: </label>
+        <input type="number" id="paidInput" value="0" oninput="calculateSummary()" style="width: 100px;">
+        <button class="btn btn-print" onclick="window.print()">প্রিন্ট মেমো</button>
+    </div>
+</div>
 
-    <nav class="sidebar" id="mainSidebar">
-        <div class="brand">
-            <span><i class="fas fa-camera"></i> স্টুডিও অনলাইন</span>
-            <i class="fas fa-times close-sidebar" onclick="closeSidebar()" style="display: block;"></i>
+<div class="invoice-container">
+    <div id="paidSeal">PAID</div>
+
+    <div class="header">
+        <div class="company-info">
+            <h1>Fuji Color Lab & Studio</h1>
+            <p><strong>Mobile:</strong> 01735-535911, 01894-816309</p>
+            <p><strong>Location:</strong> Shershah New Market, Sherpur, Bogra</p>
         </div>
-        
-        <div class="menu-label" style="margin-bottom:10px;font-size:12px;color:#888;">ওয়ার্ক সেকশন</div>
-        <a class="menu-link active" onclick="switchSection('photo')" id="nav-photo"><i class="fas fa-image"></i> ছবি (Photo)</a>
-        <a class="menu-link" onclick="switchSection('frame')" id="nav-frame"><i class="fas fa-crop-alt"></i> ফ্রেম ও লেমিনেটিং</a>
-        <a class="menu-link" onclick="switchSection('seal')" id="nav-seal"><i class="fas fa-stamp"></i> সিল (Seal)</a>
-        <a class="menu-link" onclick="switchSection('photocopy')" id="nav-photocopy"><i class="fas fa-copy"></i> ফটোকপি (Photocopy)</a>
-        <a class="menu-link" onclick="switchSection('online')" id="nav-online"><i class="fas fa-globe"></i> অনলাইন কাজ (Online)</a>
-        
-        <div class="menu-label" style="margin-top: 20px; margin-bottom:10px;font-size:12px;color:#888;">হিসাব সেকশন</div>
-        <a class="menu-link" onclick="switchSection('expense')" id="nav-expense" style="color: #e74c3c;"><i class="fas fa-money-bill-wave"></i> অফিস খরচ (Expense)</a>
-        <a class="menu-link" onclick="switchSection('report')" id="nav-report" style="color: var(--accent-brown);"><i class="fas fa-calculator"></i> মোট হিসাব (Report)</a>
-    </nav>
-
-    <main class="main-container">
-        <header class="header">
-            <div class="header-left">
-                <i class="fas fa-bars menu-toggle" onclick="openSidebar()"></i>
-                <h3 id="sectionTitle">ছবি ড্যাশবোর্ড</h3>
-            </div>
-            <div class="user-info">
-                <h4>অ্যাডমিন</h4>
-                <span>অনলাইন (Connected)</span>
-            </div>
-        </header>
-
-        <div class="printable">
-            
-            <div class="dashboard-top-grid" id="mainDashboardStats">
-                <div class="stats-panel">
-                    <div class="stats-cards">
-                        <div class="card stat-card">
-                            <div class="stat-head"><span>মোট আয়</span><i class="fas fa-wallet stat-icon"></i></div>
-                            <div class="stat-value" id="totalIncome">0 ৳</div>
-                            <div class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> <span>সর্বমোট</span></div>
-                        </div>
-                        <div class="card stat-card">
-                            <div class="stat-head"><span>মোট ব্যয়</span><i class="fas fa-shopping-cart stat-icon"></i></div>
-                            <div class="stat-value" id="totalExpense">0 ৳</div>
-                            <div class="stat-trend trend-down"><i class="fas fa-arrow-down"></i> <span>সর্বমোট</span></div>
-                        </div>
-                        <div class="card stat-card">
-                            <div class="stat-head"><span>ব্যালেন্স</span><i class="fas fa-coins stat-icon"></i></div>
-                            <div class="stat-value" id="balance">0 ৳</div>
-                            <div class="stat-trend"><span>হাতে আছে</span></div>
-                        </div>
-                        <div class="card stat-card">
-                            <div class="stat-head"><span>এন্ট্রি</span><i class="fas fa-list-alt stat-icon"></i></div>
-                            <div class="stat-value" id="txCount">0</div>
-                            <div class="stat-trend"><span>মোট রেকর্ড</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-panel no-print">
-                    <div class="card add-btn-card">
-                        <div>
-                            <h3 style="font-size: 18px; margin-bottom: 5px;" id="btnTitleText">নতুন ছবির অর্ডার?</h3>
-                            <p style="font-size: 13px; opacity: 0.8;">এখানে ক্লিক করুন</p>
-                        </div>
-                        <button class="btn-primary" onclick="toggleModal(true)">+ যুক্ত করুন</button>
-                    </div>
-                    <div class="card">
-                        <div class="chart-header"><h3>আজকের অবস্থা</h3></div>
-                        <div class="gauge-container">
-                            <canvas id="doughnutChart"></canvas>
-                            <div class="gauge-center-text">
-                                <h3 id="todayTotal" style="font-size: 20px;">0 ৳</h3>
-                                <span style="font-size: 12px; color: var(--text-secondary);">আজকের লেনদেন</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="reportNavigation" class="report-nav" style="display: none;">
-                <button class="report-btn" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> আগের মাস</button>
-                <div class="report-title" id="currentMonthLabel">January 2026</div>
-                <button class="report-btn" onclick="changeMonth(1)">পরের মাস <i class="fas fa-chevron-right"></i></button>
-            </div>
-
-            <div class="card full-width-section" style="background: transparent; box-shadow: none; padding: 0;">
-                <div class="table-header" style="background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: var(--shadow-soft);">
-                    <h3 id="tableTitle">সাম্প্রতিক তালিকা</h3>
-                    <div class="action-btn-group no-print">
-                        <button onclick="downloadCSV()" class="btn-outline" style="background:#27ae60; color:white; border:none;">
-                            <i class="fas fa-file-excel"></i> ডাউনলোড (Excel)
-                        </button>
-                        <button onclick="window.print()" class="btn-outline">
-                            <i class="fas fa-print"></i> প্রিন্ট
-                        </button>
-                    </div>
-                </div>
-                <table style="border-spacing: 0 10px; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th class="checkbox-col" width="5%">টিক</th>
-                            <th width="40%">বিবরণ</th>
-                            <th>তারিখ</th>
-                            <th>পরিমাণ</th>
-                            <th class="no-print">অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <div class="modal-overlay" id="entryModal">
-        <div class="modal-box">
-            <i class="fas fa-times modal-close" onclick="toggleModal(false)"></i>
-            <h3 style="margin-bottom: 20px; color: var(--accent-brown);" id="modalTitle">নতুন এন্ট্রি</h3>
-            
-            <div class="form-group">
-                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">তারিখ</label>
-                <input type="date" id="inputDate" class="form-input">
-            </div>
-
-            <div id="orderFields">
-                <div class="form-group" id="onlineServiceDiv" style="display: none;">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কাজের ধরন সিলেক্ট করুন</label>
-                    <select id="inputService" class="form-input" onchange="checkOnlineService()">
-                        <option value="">সিলেক্ট করুন...</option>
-                        <option value="কম্পিউটার কম্পোজ">কম্পিউটার কম্পোজ</option>
-                        <option value="ই-মেইল">ই-মেইল</option>
-                        <option value="ভোটার আইডি">ভোটার আইডি</option>
-                        <option value="জন্ম নিবন্ধন">জন্ম নিবন্ধন</option>
-                        <option value="ই-টিন">ই-টিন</option>
-                        <option value="আয়কর রিটার্ন দাখিল">আয়কর রিটার্ন দাখিল</option>
-                        <option value="কলেজ ও বিশ্ববিদ্যালয়ের ভর্তি আবেদন">কলেজ ও বিশ্ববিদ্যালয়ের ভর্তি আবেদন</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="fileUploadContainer">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">ফাইল আপলোড (অপশনাল)</label>
-                    <div class="separate-upload-box" id="slot-photo" onclick="document.getElementById('inputPhoto').click()">
-                        <i class="fas fa-image upload-icon"></i> <span class="upload-text">ছবি আপলোড করুন</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewPhoto" class="upload-preview-mini"></div>
-                        <span class="upload-status" id="statusPhoto">কোনো ফাইল নেই</span>
-                        <input type="file" id="inputPhoto" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewPhoto', 'statusPhoto', 'photo')">
-                    </div>
-                    <div class="separate-upload-box" id="slot-frame" onclick="document.getElementById('inputFrame').click()">
-                        <i class="fas fa-crop-alt upload-icon"></i> <span class="upload-text">ফ্রেম আপলোড করুন (অপশনাল)</span>
-                        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center;"><img id="previewFrame" class="upload-preview-mini"></div>
-                        <span class="upload-status" id="statusFrame">কোনো ফাইল নেই</span>
-                        <input type="file" id="inputFrame" accept="image/*" style="display: none;" onchange="previewImage(this, 'previewFrame', 'statusFrame', 'frame')">
-                    </div>
-                </div>
-
-                <div class="form-group" id="frameOptions" style="display: none;">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কাজের ধরন</label>
-                    <div class="option-group">
-                        <label class="option-label"><input type="radio" name="frameType" value="ফ্রেম (Frame)" checked> ফ্রেম (Frame)</label>
-                        <label class="option-label"><input type="radio" name="frameType" value="লেমিনেটিং (Laminating)"> লেমিনেটিং</label>
-                    </div>
-                </div>
-
-                <div class="form-group" id="sealOptions" style="display: none;">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সিলের আকৃতি</label>
-                    <div class="seal-options">
-                        <label class="seal-option-label"><input type="radio" name="sealShape" value="গোল (Round)" checked> গোল (Round)</label>
-                        <label class="seal-option-label"><input type="radio" name="sealShape" value="লাম্বা (Long)"> লাম্বা (Long)</label>
-                    </div>
-                </div>
-
-                <div class="form-group" id="sizeContainer">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">সাইজ (Size)</label>
-                    <select id="inputSize" class="form-input"><option value="">সিলেক্ট করুন</option></select>
-                </div>
-
-                <div class="form-group" id="copiesContainer">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">কত কপি?</label>
-                    <input type="number" id="inputCopies" class="form-input" placeholder="যেমন: ২ বা ৫">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">বিবরণ</label>
-                <input type="text" id="inputDesc" class="form-input" placeholder="লিখুন...">
-            </div>
-
-            <div class="form-group">
-                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px;">পরিমাণ (টাকা)</label>
-                <input type="number" id="inputAmount" class="form-input" placeholder="০০০">
-            </div>
-            
-            <button class="btn-primary" style="width: 100%; background: var(--accent-brown);" onclick="processTransaction()">সংরক্ষণ করুন</button>
+        <div class="invoice-details">
+            <table>
+                <tr><td>Invoice No:</td><td id="invNo">---</td></tr>
+                <tr><td>Date:</td><td id="invDate">---</td></tr>
+            </table>
         </div>
     </div>
 
-    <div class="modal-overlay" id="imageViewerModal" style="z-index: 2000;">
-        <div class="modal-box" style="width: auto; max-width: 90%; text-align: center;">
-            <i class="fas fa-times modal-close" onclick="document.getElementById('imageViewerModal').style.display='none'"></i>
-            <img id="fullSizeImage" src="" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">
-            <br><p id="imageOriginalName" style="margin-top: 10px; font-weight: bold; color: var(--text-primary);"></p><br>
-            <a id="downloadLink" href="" download="image.png" class="download-btn"><i class="fas fa-download"></i> ডাউনলোড করুন</a>
-        </div>
+    <div class="bill-to-section">
+        <table class="bill-to-table">
+            <tr><td width="80"><strong>Customer:</strong></td><td id="displayName">...................................................</td></tr>
+            <tr><td><strong>Phone:</strong></td><td id="displayPhone">...................................................</td></tr>
+            <tr><td><strong>Address:</strong></td><td id="displayAddr">...................................................</td></tr>
+        </table>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th width="40">SL</th>
+                <th width="320">Description</th>
+                <th width="50">Qty</th>
+                <th width="80">Rate (দর)</th>
+                <th width="90">Amount (টাকা)</th>
+                <th class="no-print" width="50">Action</th>
+            </tr>
+        </thead>
+        <tbody id="billBody"></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold;">Sub Total</td>
+                <td class="bold" id="subTotal">0.00</td>
+                <td class="no-print"></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold;">Paid / Advance</td>
+                <td id="displayPaid">0.00</td>
+                <td class="no-print"></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td colspan="4" style="text-align: right; font-weight: bold;">Total Due</td>
+                <td class="bold" id="displayDue" style="color: red;">0.00</td>
+                <td class="no-print"></td>
+            </tr>
+        </tfoot>
+    </table>
 
-        // আপনার ফায়ারবেস কনফিগারেশন
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWeWCxj1Ptk6t3SF_UEeJBQhxRH3NsrUI",
-            authDomain: "studiomanager-7b701.firebaseapp.com",
-            databaseURL: "https://studiomanager-7b701-default-rtdb.firebaseio.com",
-            projectId: "studiomanager-7b701",
-            storageBucket: "studiomanager-7b701.firebasestorage.app",
-            messagingSenderId: "490671078365",
-            appId: "1:490671078365:web:35bf071bf954a3174b9434",
-            measurementId: "G-YEQ84W1NVB"
-        };
+    <div class="in-words">
+        <strong>In Words:</strong> <span id="wordsDisplay">Zero Taka Only</span>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const transactionsRef = ref(db, 'studio_transactions');
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+        <div style="border-top: 1px solid #000; width: 160px; text-align: center; font-size: 12px; font-weight: bold;">Customer Signature</div>
+        <div style="border-top: 1px solid #000; width: 160px; text-align: center; font-size: 12px; font-weight: bold;">Authorized Signature</div>
+    </div>
+</div>
 
-        let transactions = [];
-        let doughnutChartInstance = null;
-        let currentCategory = 'photo'; 
-        let tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null } };
-        let currentReportDate = new Date(); 
+<script>
+    let items = [];
+    let gTotal = 0;
 
-        window.switchSection = function(category) {
-            currentCategory = category;
-            closeSidebar();
-            
-            const titles = { 'photo': 'ছবি ড্যাশবোর্ড', 'frame': 'ফ্রেম ও লেমিনেটিং', 'seal': 'সিল ড্যাশবোর্ড', 'photocopy': 'ফটোকপি ড্যাশবোর্ড', 'online': 'অনলাইন কাজ', 'expense': 'ব্যয় ব্যবস্থাপনা', 'report': 'মাসিক মোট হিসাব' };
-            const btnTitles = { 'photo': 'নতুন ছবির অর্ডার?', 'frame': 'নতুন ফ্রেম/লেমিনেটিং?', 'seal': 'নতুন সিল অর্ডার?', 'photocopy': 'নতুন ফটোকপি অর্ডার?', 'online': 'নতুন অনলাইন কাজ?', 'expense': 'নতুন খরচ?' };
-            
-            document.getElementById('sectionTitle').innerText = titles[category];
-            
-            if(category === 'report') {
-                document.getElementById('mainDashboardStats').style.display = 'none'; 
-                document.getElementById('reportNavigation').style.display = 'flex'; 
-                document.getElementById('tableTitle').innerText = "পুরো মাসের হিসাব (১-৩১ তারিখ)";
-                updateReportLabel();
-            } else {
-                document.getElementById('mainDashboardStats').style.display = 'grid'; 
-                document.getElementById('reportNavigation').style.display = 'none'; 
-                document.getElementById('btnTitleText').innerText = btnTitles[category];
-                document.getElementById('tableTitle').innerText = `সাম্প্রতিক ${titles[category].split(' ')[0]} তালিকা`;
-                document.getElementById('modalTitle').innerText = category === 'expense' ? 'নতুন খরচ' : 'নতুন অর্ডার';
-            }
+    document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-GB');
+    document.getElementById('invNo').innerText = 'FCL-' + Math.floor(1000 + Math.random() * 9999);
 
-            document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${category}`).classList.add('active');
-
-            if(category === 'report') loadMonthlyReport();
-            else loadDashboardData();
-        }
-
-        // --- নতুন ফাংশন: অনলাইন কাজের চেক ---
-        window.checkOnlineService = function() {
-            const service = document.getElementById('inputService').value;
-            const sizeContainer = document.getElementById('sizeContainer');
-            const inputSize = document.getElementById('inputSize');
-
-            // যদি কম্পিউটার কম্পোজ হয়, তাহলে সাইজ দেখাবে
-            if (currentCategory === 'online' && service === 'কম্পিউটার কম্পোজ') {
-                sizeContainer.style.display = 'block';
-                inputSize.innerHTML = `
-                    <option value="">সাইজ সিলেক্ট করুন</option>
-                    <option value="5R">5R</option>
-                    <option value="A4">A4</option>
-                    <option value="Legal">Legal</option>
-                `;
-            } else if (currentCategory === 'online') {
-                // অন্য কাজের জন্য সাইজ হাইড
-                sizeContainer.style.display = 'none';
-            }
-        }
-
-        window.processTransaction = function() {
-            const date = document.getElementById('inputDate').value;
-            let desc = document.getElementById('inputDesc').value;
-            const amount = parseFloat(document.getElementById('inputAmount').value);
-            
-            let size = '', copies = '';
-            
-            if(currentCategory === 'online') {
-                const service = document.getElementById('inputService').value;
-                if(service) desc = service + (desc ? " - " + desc : "");
-                
-                // কম্পিউটার কম্পোজ হলে সাইজ নিবে
-                if(service === 'কম্পিউটার কম্পোজ' && document.getElementById('sizeContainer').style.display !== 'none') {
-                    size = document.getElementById('inputSize').value;
-                }
-            }
-
-            if(currentCategory !== 'expense' && currentCategory !== 'online') {
-                if(currentCategory === 'seal') {
-                    const shape = document.querySelector('input[name="sealShape"]:checked');
-                    size = shape ? shape.value : 'গোল';
-                } else if (currentCategory === 'frame') {
-                    const type = document.querySelector('input[name="frameType"]:checked');
-                    if(type) desc = `[${type.value}] ` + desc;
-                    size = document.getElementById('inputSize').value;
-                } else {
-                    size = document.getElementById('inputSize').value;
-                }
-                copies = document.getElementById('inputCopies').value;
-            }
-
-            if (isNaN(amount) || amount <= 0) {
-                alert("টাকার পরিমাণ অবশ্যই দিতে হবে।"); return;
-            }
-
-            let type = currentCategory === 'expense' ? 'expense' : 'income';
-
-            const newTx = { 
-                category: currentCategory, 
-                date, type, desc, size, copies, amount, 
-                images: (currentCategory === 'photo' || currentCategory === 'frame') ? { ...tempImages } : {}, 
-                isChecked: false 
-            };
-            
-            push(transactionsRef, newTx).then(() => {
-                alert("ডাটা অনলাইনে সেভ হয়েছে!");
-                toggleModal(false);
-            }).catch((error) => {
-                alert("এরর: " + error.message);
-            });
-        }
-
-        window.deleteTransaction = function(id) {
-            if(confirm("মুছে ফেলতে চান?")) {
-                const itemRef = ref(db, `studio_transactions/${id}`);
-                remove(itemRef);
-            }
-        }
-
-        window.toggleCheck = function(id, currentStatus) {
-            const itemRef = ref(db, `studio_transactions/${id}`);
-            update(itemRef, { isChecked: !currentStatus });
-        }
-
-        window.openSidebar = function() { document.getElementById('mainSidebar').classList.add('active'); document.getElementById('sidebarOverlay').style.display = 'block'; }
-        window.closeSidebar = function() { document.getElementById('mainSidebar').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
+    function addItem() {
+        const name = document.getElementById('itemName').value;
+        const qty = parseFloat(document.getElementById('qty').value) || 0;
+        const price = parseFloat(document.getElementById('price').value) || 0;
+        const fixedTotal = parseFloat(document.getElementById('fixedTotal').value) || 0;
         
-        window.toggleModal = function(show) {
-            const modal = document.getElementById('entryModal');
-            modal.style.display = show ? 'flex' : 'none';
-            if(show) {
-                document.getElementById('inputDate').valueAsDate = new Date();
-                ['inputPhoto', 'inputFrame', 'inputCopies', 'inputDesc', 'inputAmount', 'inputService'].forEach(id => {
-                    if(document.getElementById(id)) document.getElementById(id).value = '';
-                });
-                ['previewPhoto', 'previewFrame'].forEach(id => document.getElementById(id).style.display = 'none');
-                ['statusPhoto', 'statusFrame'].forEach(id => { document.getElementById(id).innerText = 'কোনো ফাইল নেই'; document.getElementById(id).style.color = '#888'; });
-                
-                updateFormUI(); 
-                tempImages = { photo: { base64: null, name: null }, frame: { base64: null, name: null } };
-            }
+        const cName = document.getElementById('custName').value;
+        const cPhone = document.getElementById('custPhone').value;
+        const cAddr = document.getElementById('custAddr').value;
+
+        if(!name) return alert("কাজের বিবরণ দিন");
+
+        if(cName) document.getElementById('displayName').innerText = cName;
+        if(cPhone) document.getElementById('displayPhone').innerText = cPhone;
+        if(cAddr) document.getElementById('displayAddr').innerText = cAddr;
+
+        // যদি fixedTotal থাকে তবে সেটিই হবে টাকা, না থাকলে Qty * Rate হবে
+        let finalPrice = fixedTotal > 0 ? fixedTotal : (qty * price);
+        let displayRate = fixedTotal > 0 ? "-" : price;
+        let displayQty = fixedTotal > 0 ? "-" : qty;
+
+        items.push({ name, qty: displayQty, price: displayRate, total: finalPrice });
+        
+        renderTable();
+        document.getElementById('itemName').value = '';
+        document.getElementById('qty').value = '';
+        document.getElementById('price').value = '';
+        document.getElementById('fixedTotal').value = '';
+    }
+
+    function deleteItem(index) {
+        items.splice(index, 1);
+        renderTable();
+    }
+
+    function renderTable() {
+        const body = document.getElementById('billBody');
+        body.innerHTML = '';
+        gTotal = 0;
+
+        items.forEach((item, index) => {
+            gTotal += item.total;
+            body.innerHTML += `<tr>
+                <td>${index + 1}</td>
+                <td class="text-left">${item.name}</td>
+                <td>${item.qty}</td>
+                <td>${item.price}</td>
+                <td>${item.total.toFixed(2)}</td>
+                <td class="no-print"><button class="delete-btn" onclick="deleteItem(${index})">X</button></td>
+            </tr>`;
+        });
+
+        document.getElementById('subTotal').innerText = gTotal.toFixed(2);
+        calculateSummary();
+    }
+
+    function calculateSummary() {
+        const paid = parseFloat(document.getElementById('paidInput').value) || 0;
+        const due = gTotal - paid;
+
+        document.getElementById('displayPaid').innerText = paid.toFixed(2);
+        document.getElementById('displayDue').innerText = due.toFixed(2);
+        document.getElementById('wordsDisplay').innerText = numberToWords(Math.round(gTotal)) + " Taka Only";
+
+        const seal = document.getElementById('paidSeal');
+        if (gTotal > 0 && paid >= gTotal) {
+            seal.style.display = 'block';
+        } else {
+            seal.style.display = 'none';
         }
+    }
 
-        function updateFormUI() {
-            const orderFields = document.getElementById('orderFields');
-            const fileContainer = document.getElementById('fileUploadContainer');
-            const sealOptions = document.getElementById('sealOptions');
-            const frameOptions = document.getElementById('frameOptions');
-            const sizeContainer = document.getElementById('sizeContainer');
-            const inputSize = document.getElementById('inputSize');
-            const onlineServiceDiv = document.getElementById('onlineServiceDiv');
-            const copiesContainer = document.getElementById('copiesContainer');
-
-            // সব হাইড
-            orderFields.style.display = 'none';
-            fileContainer.style.display = 'none';
-            sealOptions.style.display = 'none';
-            frameOptions.style.display = 'none';
-            sizeContainer.style.display = 'none';
-            onlineServiceDiv.style.display = 'none';
-            copiesContainer.style.display = 'none';
-            document.getElementById('slot-photo').style.display = 'none';
-            document.getElementById('slot-frame').style.display = 'none';
-
-            if(currentCategory !== 'expense') {
-                orderFields.style.display = 'block';
-                
-                if(currentCategory === 'online') {
-                    onlineServiceDiv.style.display = 'block';
-                    // সাইজ কন্টেইনার শুরুতে হাইড থাকবে, checkOnlineService() এটা হ্যান্ডেল করবে
-                } 
-                else if(currentCategory === 'seal') {
-                    sealOptions.style.display = 'block';
-                    copiesContainer.style.display = 'block';
-                } 
-                else if(currentCategory === 'photocopy') {
-                    sizeContainer.style.display = 'block';
-                    copiesContainer.style.display = 'block';
-                    inputSize.innerHTML = `<option value="A4">A4</option><option value="Legal">Legal</option><option value="A-5R">A-5R</option>`;
-                }
-                else if(currentCategory === 'frame') {
-                    fileContainer.style.display = 'block';
-                    document.getElementById('slot-frame').style.display = 'flex';
-                    frameOptions.style.display = 'block'; 
-                    sizeContainer.style.display = 'block';
-                    inputSize.innerHTML = `<option value="3 R (3.5 X 5)">3 R (3.5"X5")</option><option value="4 R (4 X 6)">4 R (4"X6")</option><option value="5 R (5 X 7)">5 R (5"X7")</option><option value="8 R (8 X 10)">8 R (8"X10")</option><option value="10 R (10 X 12)">10 R (10"X12")</option><option value="10 L (10 X 15)">10 L (10"X15")</option><option value="12 R (12 X 16)">12 R (12"X16")</option><option value="14 R (14 X 20)">14 R (14"X20")</option><option value="20 R (20 X 24)">20 R (20"X24")</option><option value="20 L (20 X 30)">20 L (20"X30")</option><option value="30 R (30 X 40)">30 R (30"X40")</option>`;
-                }
-                else if(currentCategory === 'photo') {
-                    fileContainer.style.display = 'block';
-                    document.getElementById('slot-photo').style.display = 'flex';
-                    sizeContainer.style.display = 'block';
-                    copiesContainer.style.display = 'block';
-                    inputSize.innerHTML = `<option value="PASSPORT SIZE">PASSPORT SIZE</option><option value="STAMP">STAMP</option><option value="3 R">3 R</option><option value="4 R">4 R</option><option value="5 R">5 R</option><option value="8 R">8 R</option><option value="10 R">10 R</option><option value="10 L">10 L</option><option value="12 R">12 R</option><option value="A4">A4</option><option value="Legal">Legal</option>`;
-                }
-            }
+    function numberToWords(number) {
+        const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        if (number === 0) return 'Zero';
+        let words = '';
+        if (number >= 1000) { words += numberToWords(Math.floor(number / 1000)) + ' Thousand '; number %= 1000; }
+        if (number >= 100) { words += numberToWords(Math.floor(number / 100)) + ' Hundred '; number %= 100; }
+        if (number > 0) {
+            if (number < 20) words += a[number];
+            else { words += b[Math.floor(number / 10)]; if (number % 10 > 0) words += '-' + a[number % 10]; }
         }
-
-        window.previewImage = function(input, previewId, statusId, type) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                if(file.size > 800000) { alert("সতর্কতা: বড় ফাইল ডাটাবেস স্লো করতে পারে।"); }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(previewId).src = e.target.result;
-                    document.getElementById(previewId).style.display = 'block';
-                    document.getElementById(statusId).innerText = 'ফাইল সিলেক্টেড';
-                    document.getElementById(statusId).style.color = 'var(--success)';
-                    tempImages[type].base64 = e.target.result;
-                    tempImages[type].name = file.name;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        window.viewImage = function(imgSrc, imgName) {
-            const modal = document.getElementById('imageViewerModal');
-            const img = document.getElementById('fullSizeImage');
-            const dlLink = document.getElementById('downloadLink');
-            const nameText = document.getElementById('imageOriginalName');
-            img.src = imgSrc;
-            dlLink.href = imgSrc;
-            dlLink.setAttribute("download", imgName || "download.png");
-            nameText.innerText = "ফাইলের নাম: " + (imgName || "অজানা");
-            modal.style.display = 'flex';
-        }
-
-        window.downloadCSV = function() {
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
-            if(currentCategory === 'expense') { csvContent += "তারিখ,বিবরণ,পরিমাণ (টাকা)\n"; } 
-            else if(currentCategory === 'report') { csvContent += "বিভাগ,তারিখ,বিবরণ,পরিমাণ (টাকা),ধরন\n"; }
-            else { csvContent += "তারিখ,বিবরণ,সাইজ,কপি,পরিমাণ (টাকা),অবস্থা\n"; }
-
-            let filteredTransactions;
-            if(currentCategory === 'report') {
-                const monthStr = currentReportDate.toISOString().slice(0, 7); 
-                filteredTransactions = transactions.filter(tx => tx.date.startsWith(monthStr));
-            } else {
-                filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
-            }
-
-            filteredTransactions.forEach(function(row) {
-                let rowData = [];
-                if(currentCategory === 'expense') { rowData = [row.date, `"${row.desc}"`, row.amount]; } 
-                else if(currentCategory === 'report') { rowData = [row.category, row.date, `"${row.desc}"`, row.amount, row.type]; }
-                else { rowData = [row.date, `"${row.desc}"`, `"${row.size || ''}"`, `"${row.copies || ''}"`, row.amount, row.isChecked ? "সম্পন্ন" : "অসম্পন্ন"]; }
-                csvContent += rowData.join(",") + "\r\n";
-            });
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `studio_${currentCategory}_report.csv`);
-            document.body.appendChild(link);
-            link.click();
-        }
-
-        window.clearAllData = function() { alert("নিরাপত্তার জন্য অনলাইন রিসেট বন্ধ রাখা হয়েছে।"); }
-
-        window.changeMonth = function(offset) {
-            currentReportDate.setMonth(currentReportDate.getMonth() + offset);
-            updateReportLabel();
-            loadMonthlyReport();
-        }
-
-        function updateReportLabel() {
-            const options = { year: 'numeric', month: 'long' };
-            document.getElementById('currentMonthLabel').innerText = currentReportDate.toLocaleDateString('en-US', options);
-        }
-
-        function loadMonthlyReport() {
-            const tableBody = document.getElementById('transactionTableBody');
-            tableBody.innerHTML = '';
-            
-            const monthStr = currentReportDate.toISOString().slice(0, 7); 
-            let monthTransactions = transactions.filter(tx => tx.date.startsWith(monthStr));
-            monthTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            monthTransactions.forEach(tx => {
-                const amountColor = tx.type === 'income' ? 'var(--success)' : 'var(--danger)';
-                const sign = tx.type === 'income' ? '+' : '-';
-                
-                const row = `<tr>
-                    <td class="checkbox-col">-</td>
-                    <td>
-                        <div style="font-weight:600;">${tx.desc}</div>
-                        <div style="font-size:11px;color:#888;">${tx.category.toUpperCase()}</div>
-                    </td>
-                    <td style="color: #8D8179;">${new Date(tx.date).toLocaleDateString('bn-BD')}</td>
-                    <td style="font-weight: 600; color:${amountColor}">${sign}${tx.amount.toLocaleString()} ৳</td>
-                    <td>-</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        }
-
-        function loadDashboardData() {
-            if(currentCategory === 'report') { loadMonthlyReport(); return; }
-
-            const todayStr = new Date().toISOString().split('T')[0];
-            const tableBody = document.getElementById('transactionTableBody');
-            
-            onValue(transactionsRef, (snapshot) => {
-                const data = snapshot.val();
-                transactions = [];
-                if (data) { Object.keys(data).forEach(key => { transactions.push({ id: key, ...data[key] }); }); }
-
-                if(currentCategory === 'report') { loadMonthlyReport(); return; } 
-
-                let totalIncome = 0, totalExpense = 0, todaySum = 0;
-                tableBody.innerHTML = '';
-
-                transactions.forEach(tx => {
-                    if (tx.type === 'income') totalIncome += tx.amount;
-                    else totalExpense += tx.amount;
-                });
-
-                let filteredTransactions = transactions.filter(tx => tx.category === currentCategory);
-                filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                filteredTransactions.forEach((tx) => {
-                    if (tx.date === todayStr) todaySum += tx.amount;
-                    const amountSign = tx.type === 'income' ? '+' : '-';
-                    
-                    let detailsHtml = '';
-                    if(currentCategory !== 'expense') {
-                        const sizeHtml = tx.size ? `<span style="font-size:11px;font-weight:bold;color:var(--accent-brown);background:#f0e6dd;padding:2px 5px;border-radius:4px;">${tx.size}</span>` : '';
-                        const copiesHtml = tx.copies ? `<span class="copy-badge">${tx.copies} কপি</span>` : '';
-                        
-                        let filesHtml = '<div class="file-badges">';
-                        if (tx.images.photo && tx.images.photo.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.photo.base64}', '${tx.images.photo.name}')"><i class="fas fa-image"></i> ছবি</div>`;
-                        if (tx.images.frame && tx.images.frame.base64) filesHtml += `<div class="file-badge" onclick="viewImage('${tx.images.frame.base64}', '${tx.images.frame.name}')"><i class="fas fa-crop-alt"></i> ফ্রেম</div>`;
-                        filesHtml += '</div>';
-
-                        detailsHtml = `<div class="item-info"><div style="font-weight: 600;">${sizeHtml} ${copiesHtml}</div><div style="font-size:12px;color:#555;">${tx.desc}</div>${filesHtml}</div>`;
-                    } else {
-                        detailsHtml = `<div style="font-weight:600; color:#e74c3c;">${tx.desc}</div>`;
-                    }
-
-                    const rowClass = tx.isChecked ? 'checked-row' : '';
-                    const checkedAttr = tx.isChecked ? 'checked' : '';
-                    const checkboxHtml = currentCategory !== 'expense' ? `<td class="checkbox-col"><input type="checkbox" class="custom-checkbox" onclick="toggleCheck('${tx.id}', ${tx.isChecked})" ${checkedAttr}></td>` : `<td class="checkbox-col">-</td>`;
-
-                    const row = `<tr class="${rowClass}">${checkboxHtml}<td>${detailsHtml}</td><td style="color: #8D8179; font-size: 13px;">${new Date(tx.date).toLocaleDateString('bn-BD')}</td><td style="font-weight: 600;">${amountSign}${tx.amount.toLocaleString()} ৳</td><td class="no-print"><i class="fas fa-trash-alt" style="color: #e74c3c; cursor: pointer;" onclick="deleteTransaction('${tx.id}')"></i></td></tr>`;
-                    tableBody.innerHTML += row;
-                });
-
-                document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + ' ৳';
-                document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + ' ৳';
-                document.getElementById('balance').innerText = (totalIncome - totalExpense).toLocaleString() + ' ৳';
-                document.getElementById('txCount').innerText = filteredTransactions.length;
-                document.getElementById('todayTotal').innerText = todaySum.toLocaleString() + ' ৳';
-
-                const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
-                if (doughnutChartInstance) doughnutChartInstance.destroy();
-                doughnutChartInstance = new Chart(doughnutCtx, { type: 'doughnut', data: { labels: ['আয়', 'ব্যয়'], datasets: [{ data: [totalIncome === 0 && totalExpense === 0 ? 1 : totalIncome, totalExpense], backgroundColor: ['#5B4A42', '#E0D6CC'], borderWidth: 0, circumference: 180, rotation: 270, cutout: '75%' }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
-            });
-        }
-
-        loadDashboardData();
-    </script>
+        return words.trim();
+    }
+</script>
 
 </body>
 </html>
