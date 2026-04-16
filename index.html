@@ -32,6 +32,8 @@
         .btn-entry { background: #f39c12; color: white; }
         .btn-print { background: #2980b9; color: white; float: right; }
         .delete-icon { color: #e74c3c; cursor: pointer; font-weight: bold; border: none; background: none; }
+        .btn-view { background: #3498db; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-left: 5px; }
         input { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #34495e; width: 135px; background: #2c3e50; color: white; }
         @media print { .admin-panel, .history-container, .no-print, .delete-icon { display: none !important; } body { background: #fff; padding: 0; } .invoice-container { box-shadow: none; border: none; width: 100%; padding: 10px; margin: 0; } }
     </style>
@@ -68,7 +70,7 @@
             <h1>Fuji Color Lab & Studio</h1>
             <p>Proprietor: <strong>Raju Ahmed</strong></p>
             <p>Mobile: 01735-535911, 01580-557043</p>
-            <p>Location: Shershah New Market, 1st Floor, Sherpur, Bogura.</p>
+            <p>Location: Shershah New Market, 1st Floor, Sherpur, Bogra</p>
         </div>
         <div class="invoice-details">
             <table>
@@ -114,7 +116,7 @@
 
 <div class="history-container no-print">
     <h4 style="margin-top:0">ক্লাউড ইনভয়েস হিস্ট্রি</h4>
-    <input type="text" id="searchInput" class="search-box" placeholder="সার্চ করুন..." onkeyup="renderHistory()">
+    <input type="text" id="searchInput" class="search-box" placeholder="নাম বা ইনভয়েস নং দিয়ে সার্চ করুন..." onkeyup="renderHistory()">
     <table class="history-table">
         <thead>
             <tr>
@@ -130,7 +132,6 @@
 </div>
 
 <script>
-    // আপনার অরিজিনাল কনফিগ
     const firebaseConfig = {
         apiKey: "AIzaSyAdn5E3_y69706_snXJxgJTCtJfO8zZ9qc",
         authDomain: "fuji-color-lab.firebaseapp.com",
@@ -139,7 +140,6 @@
         messagingSenderId: "957633735",
         appId: "1:957633735:web:d92b0aed475969a19a1ae2",
         measurementId: "G-0P6QP40GEE",
-        // সচরাচর ডিফল্ট লিঙ্ক এমন হয়, তবে আপনার ড্যাশবোর্ডের লিঙ্কের সাথে মিলিয়ে নিতে পারেন
         databaseURL: "https://fuji-color-lab-default-rtdb.firebaseio.com/" 
     };
 
@@ -156,14 +156,10 @@
         fetchHistoryFromFirebase();
     };
 
-    // ডাটাবেস থেকে ইনভয়েস নম্বর আনা
     function fetchInvoiceCounter() {
         db.ref('lastInvoiceNum').on('value', (snapshot) => {
             let lastNum = snapshot.val() || 10000;
             document.getElementById('invNo').innerText = 'FCL-' + (parseInt(lastNum) + 1);
-        }, (err) => {
-            console.error("Firebase Connect Error:", err);
-            document.getElementById('invNo').innerText = "Error (Rules Check)";
         });
     }
 
@@ -228,14 +224,12 @@
         db.ref('invoices/' + invNoStr).set(data).then(() => {
             db.ref('lastInvoiceNum').set(nextNum);
             alert("ক্লাউড ডাটাবেসে সেভ হয়েছে!");
-            location.reload(); // রিলোড দিলে সব ক্লিন হয়ে নতুন বিলের জন্য রেডি হবে
-        }).catch((err) => {
-            alert("সেভ ব্যর্থ! এরর: " + err.message);
-        });
+            location.reload();
+        }).catch((err) => { alert("সেভ ব্যর্থ! এরর: " + err.message); });
     }
 
     function fetchHistoryFromFirebase() {
-        db.ref('invoices').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+        db.ref('invoices').orderByChild('timestamp').on('value', (snapshot) => {
             onlineHistory = [];
             snapshot.forEach((child) => { onlineHistory.unshift(child.val()); });
             renderHistory();
@@ -247,8 +241,15 @@
         const body = document.getElementById('historyBody');
         body.innerHTML = '';
         const filtered = onlineHistory.filter(i => (i.name || "").toLowerCase().includes(searchTerm) || (i.no || "").toLowerCase().includes(searchTerm));
+        
         filtered.forEach(i => {
-            body.innerHTML += `<tr><td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.total}</td><td><button style="background:#3498db;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="viewInvoice('${i.no}')">View</button></td></tr>`;
+            body.innerHTML += `<tr>
+                <td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.total}</td>
+                <td>
+                    <button class="btn-view" onclick="viewInvoice('${i.no}')">View</button>
+                    <button class="btn-delete" onclick="deleteInvoice('${i.no}')">Delete</button>
+                </td>
+            </tr>`;
         });
     }
 
@@ -265,6 +266,14 @@
         document.getElementById('paidInput').value = inv.paid;
         renderTable();
         window.scrollTo(0,0);
+    }
+
+    function deleteInvoice(invNo) {
+        if(confirm(invNo + " ইনভয়েসটি কি স্থায়ীভাবে ডিলিট করতে চান?")) {
+            db.ref('invoices/' + invNo).remove().then(() => {
+                alert("ডিলিট করা হয়েছে।");
+            }).catch((err) => { alert("ডিলিট করা সম্ভব হয়নি: " + err.message); });
+        }
     }
 </script>
 </body>
