@@ -3,60 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuji Color Lab - Billing & Search System</title>
+    <title>Fuji Color Lab - Online Billing System</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
         .invoice-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 1px solid #ddd; margin-bottom: 30px; }
-        
-        /* Header */
         .header { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 15px; }
         .company-info h1 { margin: 0; font-size: 28px; font-weight: bold; color: #000; text-transform: uppercase; }
         .company-info p { margin: 2px 0; font-size: 13px; color: #333; }
-        .invoice-details td:last-child { border-bottom: 1px solid #000; min-width: 100px; text-align: right; font-weight: bold; font-size: 13px; }
-
-        /* Customer Info Lines */
         .cust-info-section { margin-bottom: 20px; font-size: 15px; line-height: 1.8; }
         .dots { font-weight: normal; color: #000; border-bottom: 1px dotted #ccc; display: inline-block; min-width: 250px; }
-
-        /* Tables */
         .main-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin-top: 5px; }
         .main-table th { background: #f8f9fa; border: 1px solid #000; padding: 8px; font-weight: bold; }
         .main-table td { border: 1px solid #000; padding: 6px; }
         .text-left { text-align: left; padding-left: 10px !important; }
-        
-        /* Paid Seal */
-        #paidSeal {
-            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
-            border: 4px double rgba(255, 0, 0, 0.3); color: rgba(255, 0, 0, 0.3);
-            font-size: 60px; font-weight: 900; padding: 5px 20px; border-radius: 12px;
-            display: none; z-index: 5; pointer-events: none;
-        }
-
-        /* Admin & History Section */
+        #paidSeal { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg); border: 4px double rgba(255, 0, 0, 0.3); color: rgba(255, 0, 0, 0.3); font-size: 60px; font-weight: 900; padding: 5px 20px; border-radius: 12px; display: none; z-index: 5; pointer-events: none; }
         .admin-panel, .history-container { max-width: 800px; margin: 0 auto 20px; background: #1a252f; color: #fff; padding: 20px; border-radius: 8px; }
         .history-container { background: #fff; color: #000; border: 1px solid #ddd; padding: 15px; }
         .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .history-table th, .history-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-
         .search-box { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #3498db; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-
         .btn { padding: 10px 18px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; margin: 5px; transition: 0.3s; }
         .btn-add { background: #27ae60; color: white; }
         .btn-entry { background: #f39c12; color: white; }
         .btn-print { background: #2980b9; color: white; float: right; }
-        
         .delete-icon { color: #e74c3c; cursor: pointer; font-weight: bold; border: none; background: none; }
-        .btn-view { background: #3498db; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; }
-        .btn-edit { background: #9b59b6; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; margin-left: 5px; }
-        .btn-del-hist { background: #e74c3c; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; margin-left: 5px; }
-
         input { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #34495e; width: 135px; background: #2c3e50; color: white; }
-        
-        @media print {
-            .admin-panel, .history-container, .no-print, .delete-icon { display: none !important; }
-            body { background: #fff; padding: 0; }
-            .invoice-container { box-shadow: none; border: none; width: 100%; padding: 10px; margin: 0; }
-        }
+        @media print { .admin-panel, .history-container, .no-print, .delete-icon { display: none !important; } body { background: #fff; padding: 0; } .invoice-container { box-shadow: none; border: none; width: 100%; padding: 10px; margin: 0; } }
     </style>
 </head>
 <body>
@@ -67,18 +43,20 @@
         <input type="text" id="custName" placeholder="কাস্টমারের নাম">
         <input type="text" id="custPhone" placeholder="ফোন নম্বর">
         <input type="text" id="custAddr" placeholder="ঠিকানা">
+        <input type="text" id="opName" placeholder="অপারেটর" value="Raju Ahmed">
     </div>
     <div style="margin-top: 10px; border-top: 1px solid #34495e; padding-top: 10px;">
         <input type="text" id="itemName" placeholder="কাজের বিবরণ">
         <input type="number" id="qty" placeholder="Qty">
-        <input type="number" id="price" placeholder="Rate (দর)">
-        <input type="number" id="fixedTotal" placeholder="টাকা (সরাসরি)">
+        <input type="number" id="price" placeholder="Rate">
+        <input type="number" id="fixedTotal" placeholder="সরাসরি টাকা">
         <button class="btn btn-add" onclick="addItem()">আইটেম যোগ</button>
     </div>
     <div style="margin-top: 10px;">
         <label>পরিশোধ: </label> <input type="number" id="paidInput" value="0" oninput="calculateSummary()">
-        <button class="btn btn-entry" id="saveBtn" onclick="saveToHistory()">এন্ট্রি (Save)</button>
+        <button class="btn btn-entry" id="saveBtn" onclick="saveToFirebase()">অনলাইনে সেভ করুন</button>
         <button class="btn btn-print" onclick="window.print()">প্রিন্ট মেমো</button>
+        <button class="btn" style="background: #7f8c8d; color: white;" onclick="resetInvoice()">নতুন বিল (Reset)</button>
     </div>
 </div>
 
@@ -89,20 +67,20 @@
             <h1>Fuji Color Lab & Studio</h1>
             <p>Proprietor: <strong>Raju Ahmed</strong></p>
             <p>Mobile: 01735-535911, 01580-557043</p>
-            <p>Location: Shershah New Market, Sherpur, Bogra</p>
+            <p>Location: Shershah New Market, 1st Floor, Sherpur, Bogura.</p>
         </div>
         <div class="invoice-details">
-            <table>
-                <tr><td>Invoice No:</td><td id="invNo">FCL-10001</td></tr>
+            <table style="text-align: right;">
+                <tr><td>Invoice No:</td><td id="invNo">FCL-Loading</td></tr>
                 <tr><td>Date:</td><td id="invDate">---</td></tr>
             </table>
         </div>
     </div>
 
     <div class="cust-info-section">
-        <strong>Customer:</strong> <span id="displayName" class="dots">...................................................................</span><br>
-        <strong>Phone:</strong> <span id="displayPhone" class="dots">......................................................................</span><br>
-        <strong>Address:</strong> <span id="displayAddr" class="dots">....................................................................</span>
+        <strong>Customer:</strong> <span id="displayName" class="dots">...................................</span><br>
+        <strong>Phone:</strong> <span id="displayPhone" class="dots">...................................</span><br>
+        <strong>Address:</strong> <span id="displayAddr" class="dots">...................................</span>
     </div>
 
     <table class="main-table">
@@ -124,22 +102,25 @@
         </tfoot>
     </table>
 
-    <div style="margin-top: 50px; display: flex; justify-content: space-between;">
-        <div style="border-top: 1px solid #000; width: 170px; text-align: center; font-size: 12px; font-weight: bold;">Customer Signature</div>
-        <div style="border-top: 1px solid #000; width: 170px; text-align: center; font-size: 12px; font-weight: bold;">Authorized Signature</div>
+    <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div style="border-top: 1px solid #000; width: 180px; text-align: center; font-size: 12px;">Customer Signature</div>
+        <div style="text-align: center; width: 220px;">
+            <p style="margin: 0; font-size: 13px; font-style: italic;">Sold By: <span id="displayOperator" style="font-weight: bold;">Raju Ahmed</span></p>
+            <div style="margin-top: 15px; border-top: 1px solid #000; font-weight: bold; font-size: 12px; padding-top: 5px;">Authorized Signature</div>
+        </div>
     </div>
 </div>
 
 <div class="history-container no-print">
-    <h4 style="margin-top:0">পূর্ববর্তী ইনভয়েস তালিকা (History)</h4>
-    <input type="text" id="searchInput" class="search-box" placeholder="নাম, ফোন বা ইনভয়েস নম্বর দিয়ে সার্চ করুন..." onkeyup="renderHistory()">
-    
+    <h4 style="margin-top:0">অনলাইন ইনভয়েস হিস্ট্রি (Firebase)</h4>
+    <input type="text" id="searchInput" class="search-box" placeholder="নাম, ফোন বা বিক্রেতা দিয়ে সার্চ করুন..." onkeyup="renderHistory()">
     <table class="history-table">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Inv No</th>
                 <th>Customer</th>
+                <th>Sold By</th>
                 <th>Total</th>
                 <th>Action</th>
             </tr>
@@ -149,57 +130,65 @@
 </div>
 
 <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAdn5E3_y69706_snXJxgJTCtJfO8zZ9qc",
+        authDomain: "fuji-color-lab.firebaseapp.com",
+        projectId: "fuji-color-lab",
+        storageBucket: "fuji-color-lab.firebasestorage.app",
+        messagingSenderId: "957633735",
+        appId: "1:957633735:web:d92b0aed475969a19a1ae2",
+        measurementId: "G-0P6QP40GEE",
+        databaseURL: "https://fuji-color-lab-default-rtdb.firebaseio.com/" // আপনার প্রোজেক্ট অনুযায়ী লিঙ্ক
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let items = [];
     let gTotal = 0;
-    let editIndex = -1;
+    let onlineHistory = [];
 
-    window.onload = function() { resetInvoice(); renderHistory(); };
+    window.onload = function() {
+        document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-GB');
+        fetchInvoiceCounter();
+        fetchHistoryFromFirebase();
+    };
 
-    function getNextInvoiceNumber() {
-        let lastNum = localStorage.getItem('lastFclNum');
-        if (!lastNum) {
-            lastNum = 10001;
-        } else {
-            lastNum = parseInt(lastNum) + 1;
-        }
-        return lastNum;
+    function fetchInvoiceCounter() {
+        db.ref('lastInvoiceNum').on('value', (snapshot) => {
+            let lastNum = snapshot.val() || 10000;
+            document.getElementById('invNo').innerText = 'FCL-' + (lastNum + 1);
+        });
     }
 
     function resetInvoice() {
-        document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-GB');
-        if(editIndex === -1) {
-            let nextNum = getNextInvoiceNumber();
-            document.getElementById('invNo').innerText = 'FCL-' + nextNum;
-        }
-        document.getElementById('displayName').innerText = '...................................................................';
-        document.getElementById('displayPhone').innerText = '......................................................................';
-        document.getElementById('displayAddr').innerText = '....................................................................';
+        items = [];
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('custAddr').value = '';
         document.getElementById('paidInput').value = 0;
-        document.getElementById('saveBtn').innerText = "এন্ট্রি (Save)";
-        document.getElementById('panelTitle').innerText = "ফুজি কালার ল্যাব এন্ট্রি প্যানেল";
-        editIndex = -1;
-        items = [];
+        document.getElementById('displayName').innerText = '...................................';
+        document.getElementById('displayPhone').innerText = '...................................';
+        document.getElementById('displayAddr').innerText = '...................................';
         renderTable();
     }
 
     function addItem() {
-        const name = document.getElementById('itemName').value;
-        const qty = parseFloat(document.getElementById('qty').value) || 0;
-        const price = parseFloat(document.getElementById('price').value) || 0;
-        const fixed = parseFloat(document.getElementById('fixedTotal').value) || 0;
+        const desc = document.getElementById('itemName').value;
+        const q = parseFloat(document.getElementById('qty').value) || 0;
+        const r = parseFloat(document.getElementById('price').value) || 0;
+        const f = parseFloat(document.getElementById('fixedTotal').value) || 0;
+        if(!desc) return;
 
-        if(!name) return alert("বিবরণ দিন");
+        let total = f > 0 ? f : (q * r);
+        items.push({ desc, qty: f > 0 ? "-" : q, rate: f > 0 ? "-" : r, amount: total });
 
-        document.getElementById('displayName').innerText = document.getElementById('custName').value || '.........................';
-        document.getElementById('displayPhone').innerText = document.getElementById('custPhone').value || '.........................';
-        document.getElementById('displayAddr').innerText = document.getElementById('custAddr').value || '.........................';
+        document.getElementById('displayName').innerText = document.getElementById('custName').value || '.......';
+        document.getElementById('displayPhone').innerText = document.getElementById('custPhone').value || '.......';
+        document.getElementById('displayAddr').innerText = document.getElementById('custAddr').value || '.......';
+        document.getElementById('displayOperator').innerText = document.getElementById('opName').value || 'Raju Ahmed';
 
-        let total = fixed > 0 ? fixed : (qty * price);
-        items.push({ name, qty: fixed > 0 ? "-" : qty, price: fixed > 0 ? "-" : price, total });
-        
         renderTable();
         document.getElementById('itemName').value = '';
         document.getElementById('qty').value = '';
@@ -207,24 +196,12 @@
         document.getElementById('fixedTotal').value = '';
     }
 
-    function deleteItem(index) {
-        items.splice(index, 1);
-        renderTable();
-    }
-
     function renderTable() {
         const body = document.getElementById('billBody');
         body.innerHTML = ''; gTotal = 0;
-        items.forEach((item, index) => {
-            gTotal += item.total;
-            body.innerHTML += `<tr>
-                <td>${index+1}</td>
-                <td class="text-left">${item.name}</td>
-                <td>${item.qty}</td>
-                <td>${item.price}</td>
-                <td>${item.total.toFixed(2)}</td>
-                <td class="no-print"><button class="delete-icon" onclick="deleteItem(${index})">✖</button></td>
-            </tr>`;
+        items.forEach((it, index) => {
+            gTotal += it.amount;
+            body.innerHTML += `<tr><td>${index+1}</td><td class="text-left">${it.desc}</td><td>${it.qty}</td><td>${it.rate}</td><td>${it.amount.toFixed(2)}</td><td class="no-print"><button class="delete-icon" onclick="items.splice(${index},1);renderTable();">✖</button></td></tr>`;
         });
         document.getElementById('subTotal').innerText = gTotal.toFixed(2);
         calculateSummary();
@@ -232,111 +209,86 @@
 
     function calculateSummary() {
         const paid = parseFloat(document.getElementById('paidInput').value) || 0;
-        const due = gTotal - paid;
         document.getElementById('displayPaid').innerText = paid.toFixed(2);
-        document.getElementById('displayDue').innerText = due.toFixed(2);
+        document.getElementById('displayDue').innerText = (gTotal - paid).toFixed(2);
         document.getElementById('paidSeal').style.display = (gTotal > 0 && paid >= gTotal) ? 'block' : 'none';
     }
 
-    function saveToHistory() {
-        if(items.length === 0) return alert("আইটেম নেই!");
-        
-        const currentInvNo = document.getElementById('invNo').innerText;
-        const inv = {
+    function saveToFirebase() {
+        if(items.length === 0) return alert("আইটেম যোগ করুন!");
+        const invNoStr = document.getElementById('invNo').innerText;
+        const nextNum = parseInt(invNoStr.replace('FCL-', ''));
+
+        const data = {
+            no: invNoStr,
             date: document.getElementById('invDate').innerText,
-            no: currentInvNo,
             name: document.getElementById('custName').value,
             phone: document.getElementById('custPhone').value,
             addr: document.getElementById('custAddr').value,
-            items: [...items],
-            total: gTotal.toFixed(2),
-            paid: parseFloat(document.getElementById('paidInput').value || 0).toFixed(2),
-            due: (gTotal - parseFloat(document.getElementById('paidInput').value || 0)).toFixed(2)
+            operator: document.getElementById('opName').value,
+            items: items,
+            total: gTotal,
+            paid: document.getElementById('paidInput').value,
+            timestamp: Date.now()
         };
 
-        let history = JSON.parse(localStorage.getItem('fujiHistory')) || [];
+        db.ref('invoices/' + invNoStr).set(data).then(() => {
+            db.ref('lastInvoiceNum').set(nextNum);
+            alert("অনলাইনে সেভ সফল হয়েছে!");
+            resetInvoice();
+        });
+    }
 
-        if(editIndex > -1) {
-            history[editIndex] = inv;
-            alert("ইনভয়েস আপডেট হয়েছে!");
-        } else {
-            history.unshift(inv);
-            let numOnly = currentInvNo.replace('FCL-', '');
-            localStorage.setItem('lastFclNum', numOnly);
-            alert("সেভ হয়েছে!");
-        }
-
-        localStorage.setItem('fujiHistory', JSON.stringify(history));
-        resetInvoice();
-        renderHistory();
+    function fetchHistoryFromFirebase() {
+        db.ref('invoices').orderByChild('timestamp').on('value', (snapshot) => {
+            onlineHistory = [];
+            snapshot.forEach((child) => {
+                onlineHistory.unshift(child.val());
+            });
+            renderHistory();
+        });
     }
 
     function renderHistory() {
-        const hBody = document.getElementById('historyBody');
-        const history = JSON.parse(localStorage.getItem('fujiHistory')) || [];
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        
-        const filtered = history.filter(i => 
+        const body = document.getElementById('historyBody');
+        body.innerHTML = '';
+
+        const filtered = onlineHistory.filter(i => 
             (i.name && i.name.toLowerCase().includes(searchTerm)) || 
-            (i.phone && i.phone.includes(searchTerm)) || 
+            (i.phone && i.phone.includes(searchTerm)) ||
             (i.no && i.no.toLowerCase().includes(searchTerm))
         );
 
-        hBody.innerHTML = filtered.map((i, index) => {
-            const originalIndex = history.findIndex(h => h.no === i.no);
-            return `<tr>
-                <td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.total}</td>
+        filtered.forEach(i => {
+            body.innerHTML += `<tr>
+                <td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.operator || 'Raju Ahmed'}</td><td>${i.total}</td>
                 <td>
-                    <button class="btn-view" onclick="viewInvoice(${originalIndex})">View</button>
-                    <button class="btn-edit" onclick="editInvoice(${originalIndex})">Edit</button>
-                    <button class="btn-del-hist" onclick="deleteHistoryItem(${originalIndex})">Delete</button>
+                    <button style="background:#3498db;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="viewInvoice('${i.no}')">View</button>
+                    <button style="background:#e74c3c;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="deleteInvoice('${i.no}')">Del</button>
                 </td>
             </tr>`;
-        }).join('');
+        });
     }
 
-    function viewInvoice(index) {
-        const history = JSON.parse(localStorage.getItem('fujiHistory'));
-        const inv = history[index];
-        document.getElementById('invDate').innerText = inv.date;
-        document.getElementById('invNo').innerText = inv.no;
-        document.getElementById('displayName').innerText = inv.name || '.........................';
-        document.getElementById('displayPhone').innerText = inv.phone || '.........................';
-        document.getElementById('displayAddr').innerText = inv.addr || '.........................';
-        items = inv.items;
-        document.getElementById('displayPaid').innerText = inv.paid;
-        document.getElementById('displayDue').innerText = inv.due;
-        renderTable();
-        window.scrollTo(0, 0);
-    }
-
-    function editInvoice(index) {
-        const history = JSON.parse(localStorage.getItem('fujiHistory'));
-        const inv = history[index];
-        
-        document.getElementById('custName').value = inv.name || '';
-        document.getElementById('custPhone').value = inv.phone || '';
-        document.getElementById('custAddr').value = inv.addr || '';
+    function viewInvoice(invNo) {
+        const inv = onlineHistory.find(h => h.no === invNo);
+        if(!inv) return;
         document.getElementById('invNo').innerText = inv.no;
         document.getElementById('invDate').innerText = inv.date;
+        document.getElementById('displayName').innerText = inv.name || '.......';
+        document.getElementById('displayPhone').innerText = inv.phone || '.......';
+        document.getElementById('displayAddr').innerText = inv.addr || '.......';
+        document.getElementById('displayOperator').innerText = inv.operator || 'Raju Ahmed';
+        items = inv.items || [];
         document.getElementById('paidInput').value = inv.paid;
-        
-        items = [...inv.items];
-        editIndex = index;
-
-        document.getElementById('saveBtn').innerText = "Update Invoice";
-        document.getElementById('panelTitle').innerText = "এডিট মুড - ইনভয়েস আপডেট করুন";
-        
         renderTable();
-        window.scrollTo(0, 0);
+        window.scrollTo(0,0);
     }
 
-    function deleteHistoryItem(index) {
-        if(confirm("মুছে ফেলবেন?")) {
-            let history = JSON.parse(localStorage.getItem('fujiHistory'));
-            history.splice(index, 1);
-            localStorage.setItem('fujiHistory', JSON.stringify(history));
-            renderHistory();
+    function deleteInvoice(invNo) {
+        if(confirm("আপনি কি নিশ্চিতভাবে এই ইনভয়েসটি অনলাইন থেকে ডিলিট করতে চান?")) {
+            db.ref('invoices/' + invNo).remove();
         }
     }
 </script>
