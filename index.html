@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuji Color Lab - Online Billing System</title>
+    <title>Fuji Color Lab - Cloud Billing System</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -14,6 +14,7 @@
         .header { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 15px; }
         .company-info h1 { margin: 0; font-size: 28px; font-weight: bold; color: #000; text-transform: uppercase; }
         .company-info p { margin: 2px 0; font-size: 13px; color: #333; }
+        .invoice-details td:last-child { border-bottom: 1px solid #000; min-width: 100px; text-align: right; font-weight: bold; font-size: 13px; }
         .cust-info-section { margin-bottom: 20px; font-size: 15px; line-height: 1.8; }
         .dots { font-weight: normal; color: #000; border-bottom: 1px dotted #ccc; display: inline-block; min-width: 250px; }
         .main-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin-top: 5px; }
@@ -38,7 +39,7 @@
 <body>
 
 <div class="admin-panel no-print">
-    <h3 id="panelTitle">ফুজি কালার ল্যাব এন্ট্রি প্যানেল</h3>
+    <h3 id="panelTitle">ফুজি কালার ল্যাব - ক্লাউড এন্ট্রি</h3>
     <div>
         <input type="text" id="custName" placeholder="কাস্টমারের নাম">
         <input type="text" id="custPhone" placeholder="ফোন নম্বর">
@@ -54,9 +55,9 @@
     </div>
     <div style="margin-top: 10px;">
         <label>পরিশোধ: </label> <input type="number" id="paidInput" value="0" oninput="calculateSummary()">
-        <button class="btn btn-entry" id="saveBtn" onclick="saveToFirebase()">অনলাইনে সেভ করুন</button>
+        <button class="btn btn-entry" id="saveBtn" onclick="saveToFirebase()">অনলাইনে সেভ (Cloud)</button>
         <button class="btn btn-print" onclick="window.print()">প্রিন্ট মেমো</button>
-        <button class="btn" style="background: #7f8c8d; color: white;" onclick="resetInvoice()">নতুন বিল (Reset)</button>
+        <button class="btn" style="background: #7f8c8d; color: white;" onclick="location.reload()">Reset (লোড)</button>
     </div>
 </div>
 
@@ -67,11 +68,11 @@
             <h1>Fuji Color Lab & Studio</h1>
             <p>Proprietor: <strong>Raju Ahmed</strong></p>
             <p>Mobile: 01735-535911, 01580-557043</p>
-            <p>Location: Shershah New Market, 1st Floor, Sherpur, Bogura.</p>
+            <p>Location: Shershah New Market, 1st Floor, Sherpur, Bogra</p>
         </div>
         <div class="invoice-details">
-            <table style="text-align: right;">
-                <tr><td>Invoice No:</td><td id="invNo">FCL-Loading</td></tr>
+            <table>
+                <tr><td>Invoice No:</td><td id="invNo">FCL-Wait...</td></tr>
                 <tr><td>Date:</td><td id="invDate">---</td></tr>
             </table>
         </div>
@@ -112,15 +113,14 @@
 </div>
 
 <div class="history-container no-print">
-    <h4 style="margin-top:0">অনলাইন ইনভয়েস হিস্ট্রি (Firebase)</h4>
-    <input type="text" id="searchInput" class="search-box" placeholder="নাম, ফোন বা বিক্রেতা দিয়ে সার্চ করুন..." onkeyup="renderHistory()">
+    <h4 style="margin-top:0">ক্লাউড ইনভয়েস হিস্ট্রি</h4>
+    <input type="text" id="searchInput" class="search-box" placeholder="সার্চ করুন..." onkeyup="renderHistory()">
     <table class="history-table">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Inv No</th>
                 <th>Customer</th>
-                <th>Sold By</th>
                 <th>Total</th>
                 <th>Action</th>
             </tr>
@@ -130,7 +130,7 @@
 </div>
 
 <script>
-    // Firebase Configuration
+    // আপনার অরিজিনাল কনফিগ
     const firebaseConfig = {
         apiKey: "AIzaSyAdn5E3_y69706_snXJxgJTCtJfO8zZ9qc",
         authDomain: "fuji-color-lab.firebaseapp.com",
@@ -139,7 +139,8 @@
         messagingSenderId: "957633735",
         appId: "1:957633735:web:d92b0aed475969a19a1ae2",
         measurementId: "G-0P6QP40GEE",
-        databaseURL: "https://jihadhasan2006.github.io/Fuji-Color-Lab-Studio//" // আপনার প্রোজেক্ট অনুযায়ী লিঙ্ক
+        // সচরাচর ডিফল্ট লিঙ্ক এমন হয়, তবে আপনার ড্যাশবোর্ডের লিঙ্কের সাথে মিলিয়ে নিতে পারেন
+        databaseURL: "https://fuji-color-lab-default-rtdb.firebaseio.com/" 
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -155,23 +156,15 @@
         fetchHistoryFromFirebase();
     };
 
+    // ডাটাবেস থেকে ইনভয়েস নম্বর আনা
     function fetchInvoiceCounter() {
         db.ref('lastInvoiceNum').on('value', (snapshot) => {
             let lastNum = snapshot.val() || 10000;
-            document.getElementById('invNo').innerText = 'FCL-' + (lastNum + 1);
+            document.getElementById('invNo').innerText = 'FCL-' + (parseInt(lastNum) + 1);
+        }, (err) => {
+            console.error("Firebase Connect Error:", err);
+            document.getElementById('invNo').innerText = "Error (Rules Check)";
         });
-    }
-
-    function resetInvoice() {
-        items = [];
-        document.getElementById('custName').value = '';
-        document.getElementById('custPhone').value = '';
-        document.getElementById('custAddr').value = '';
-        document.getElementById('paidInput').value = 0;
-        document.getElementById('displayName').innerText = '...................................';
-        document.getElementById('displayPhone').innerText = '...................................';
-        document.getElementById('displayAddr').innerText = '...................................';
-        renderTable();
     }
 
     function addItem() {
@@ -234,17 +227,17 @@
 
         db.ref('invoices/' + invNoStr).set(data).then(() => {
             db.ref('lastInvoiceNum').set(nextNum);
-            alert("অনলাইনে সেভ সফল হয়েছে!");
-            resetInvoice();
+            alert("ক্লাউড ডাটাবেসে সেভ হয়েছে!");
+            location.reload(); // রিলোড দিলে সব ক্লিন হয়ে নতুন বিলের জন্য রেডি হবে
+        }).catch((err) => {
+            alert("সেভ ব্যর্থ! এরর: " + err.message);
         });
     }
 
     function fetchHistoryFromFirebase() {
-        db.ref('invoices').orderByChild('timestamp').on('value', (snapshot) => {
+        db.ref('invoices').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
             onlineHistory = [];
-            snapshot.forEach((child) => {
-                onlineHistory.unshift(child.val());
-            });
+            snapshot.forEach((child) => { onlineHistory.unshift(child.val()); });
             renderHistory();
         });
     }
@@ -253,21 +246,9 @@
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const body = document.getElementById('historyBody');
         body.innerHTML = '';
-
-        const filtered = onlineHistory.filter(i => 
-            (i.name && i.name.toLowerCase().includes(searchTerm)) || 
-            (i.phone && i.phone.includes(searchTerm)) ||
-            (i.no && i.no.toLowerCase().includes(searchTerm))
-        );
-
+        const filtered = onlineHistory.filter(i => (i.name || "").toLowerCase().includes(searchTerm) || (i.no || "").toLowerCase().includes(searchTerm));
         filtered.forEach(i => {
-            body.innerHTML += `<tr>
-                <td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.operator || 'Raju Ahmed'}</td><td>${i.total}</td>
-                <td>
-                    <button style="background:#3498db;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="viewInvoice('${i.no}')">View</button>
-                    <button style="background:#e74c3c;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="deleteInvoice('${i.no}')">Del</button>
-                </td>
-            </tr>`;
+            body.innerHTML += `<tr><td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.total}</td><td><button style="background:#3498db;color:#fff;border:none;padding:3px 7px;cursor:pointer" onclick="viewInvoice('${i.no}')">View</button></td></tr>`;
         });
     }
 
@@ -284,12 +265,6 @@
         document.getElementById('paidInput').value = inv.paid;
         renderTable();
         window.scrollTo(0,0);
-    }
-
-    function deleteInvoice(invNo) {
-        if(confirm("আপনি কি নিশ্চিতভাবে এই ইনভয়েসটি অনলাইন থেকে ডিলিট করতে চান?")) {
-            db.ref('invoices/' + invNo).remove();
-        }
     }
 </script>
 </body>
