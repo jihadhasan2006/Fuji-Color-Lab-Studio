@@ -3,55 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuji Color Lab - Billing System</title>
+    <title>Fuji Color Lab - Billing & Search System</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .invoice-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 1px solid #ddd; }
+        .invoice-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 1px solid #ddd; margin-bottom: 30px; }
         
+        /* Header */
         .header { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 15px; }
         .company-info h1 { margin: 0; font-size: 28px; font-weight: bold; color: #000; text-transform: uppercase; }
         .company-info p { margin: 2px 0; font-size: 13px; color: #333; }
-        .invoice-details table { border-collapse: collapse; font-size: 13px; }
-        .invoice-details td { padding: 2px 5px; }
-        .invoice-details td:last-child { border-bottom: 1px solid #000; min-width: 100px; text-align: right; font-weight: bold; }
+        .invoice-details td:last-child { border-bottom: 1px solid #000; min-width: 100px; text-align: right; font-weight: bold; font-size: 13px; }
 
-        .bill-to-section { margin-bottom: 15px; }
-        .bill-to-table { border-collapse: collapse; font-size: 14px; width: 100%; }
-        .bill-to-table td { padding: 3px 0; vertical-align: top; }
+        /* Customer Info Lines */
+        .cust-info-section { margin-bottom: 20px; font-size: 15px; line-height: 1.8; }
+        .dots { font-weight: normal; color: #000; border-bottom: 1px dotted #ccc; display: inline-block; min-width: 250px; }
 
+        /* Tables */
         .main-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin-top: 5px; }
         .main-table th { background: #f8f9fa; border: 1px solid #000; padding: 8px; font-weight: bold; }
         .main-table td { border: 1px solid #000; padding: 6px; }
         .text-left { text-align: left; padding-left: 10px !important; }
-        .bold { font-weight: bold; }
-
+        
+        /* Paid Seal */
         #paidSeal {
             position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
             border: 4px double rgba(255, 0, 0, 0.3); color: rgba(255, 0, 0, 0.3);
             font-size: 60px; font-weight: 900; padding: 5px 20px; border-radius: 12px;
-            display: none; z-index: 5; pointer-events: none; letter-spacing: 5px;
+            display: none; z-index: 5; pointer-events: none;
         }
 
-        .admin-panel { max-width: 800px; margin: 0 auto 20px; background: #1a252f; color: #fff; padding: 20px; border-radius: 8px; }
-        .admin-panel input { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #34495e; width: 130px; background: #2c3e50; color: white; }
-        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; margin: 5px; }
+        /* Admin & History Section */
+        .admin-panel, .history-container { max-width: 800px; margin: 0 auto 20px; background: #1a252f; color: #fff; padding: 20px; border-radius: 8px; }
+        .history-container { background: #fff; color: #000; border: 1px solid #ddd; padding: 15px; }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .history-table th, .history-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+
+        .search-box { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #3498db; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+
+        .btn { padding: 10px 18px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; margin: 5px; transition: 0.3s; }
         .btn-add { background: #27ae60; color: white; }
+        .btn-entry { background: #f39c12; color: white; }
         .btn-print { background: #2980b9; color: white; float: right; }
         
-        .delete-btn { background: #c0392b; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; }
-        .in-words { margin-top: 15px; padding: 8px; border: 1px dashed #000; font-style: italic; font-weight: bold; font-size: 12px; }
+        .delete-icon { color: #e74c3c; cursor: pointer; font-weight: bold; border: none; background: none; }
+        .btn-view { background: #3498db; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; }
+        .btn-edit { background: #9b59b6; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; margin-left: 5px; }
+        .btn-del-hist { background: #e74c3c; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; border: none; cursor: pointer; margin-left: 5px; }
 
+        input { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #34495e; width: 135px; background: #2c3e50; color: white; }
+        
         @media print {
+            .admin-panel, .history-container, .no-print, .delete-icon { display: none !important; }
             body { background: #fff; padding: 0; }
-            .admin-panel, .no-print { display: none !important; } 
-            .invoice-container { box-shadow: none; padding: 20px; max-width: 100%; border: none; }
+            .invoice-container { box-shadow: none; border: none; width: 100%; padding: 10px; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="admin-panel">
-    <h3>ফজি কালার ল্যাব এন্ট্রি প্যানেল</h3>
+<div class="admin-panel no-print">
+    <h3 id="panelTitle">ফুজি কালার ল্যাব এন্ট্রি প্যানেল</h3>
     <div>
         <input type="text" id="custName" placeholder="কাস্টমারের নাম">
         <input type="text" id="custPhone" placeholder="ফোন নম্বর">
@@ -62,38 +73,36 @@
         <input type="number" id="qty" placeholder="Qty">
         <input type="number" id="price" placeholder="Rate (দর)">
         <input type="number" id="fixedTotal" placeholder="টাকা (সরাসরি)">
-        <button class="btn btn-add" onclick="addItem()">যোগ করুন</button>
+        <button class="btn btn-add" onclick="addItem()">আইটেম যোগ</button>
     </div>
     <div style="margin-top: 10px;">
-        <label>পরিশোধ: </label>
-        <input type="number" id="paidInput" value="0" oninput="calculateSummary()" style="width: 100px;">
+        <label>পরিশোধ: </label> <input type="number" id="paidInput" value="0" oninput="calculateSummary()">
+        <button class="btn btn-entry" id="saveBtn" onclick="saveToHistory()">এন্ট্রি (Save)</button>
         <button class="btn btn-print" onclick="window.print()">প্রিন্ট মেমো</button>
     </div>
 </div>
 
-<div class="invoice-container">
+<div class="invoice-container" id="printableInvoice">
     <div id="paidSeal">PAID</div>
-
     <div class="header">
         <div class="company-info">
             <h1>Fuji Color Lab & Studio</h1>
-            <p><strong>Mobile:</strong> 01735-535911, 01894-816309</p>
-            <p><strong>Location:</strong> Shershah New Market, Sherpur, Bogra</p>
+            <p>Proprietor: <strong>Raju Ahmed</strong></p>
+            <p>Mobile: 01735-535911, 01580-557043</p>
+            <p>Location: Shershah New Market, Sherpur, Bogra</p>
         </div>
         <div class="invoice-details">
             <table>
-                <tr><td>Invoice No:</td><td id="invNo">---</td></tr>
+                <tr><td>Invoice No:</td><td id="invNo">FCL-10001</td></tr>
                 <tr><td>Date:</td><td id="invDate">---</td></tr>
             </table>
         </div>
     </div>
 
-    <div class="bill-to-section">
-        <table class="bill-to-table">
-            <tr><td width="80"><strong>Customer:</strong></td><td id="displayName">...................................................</td></tr>
-            <tr><td><strong>Phone:</strong></td><td id="displayPhone">...................................................</td></tr>
-            <tr><td><strong>Address:</strong></td><td id="displayAddr">...................................................</td></tr>
-        </table>
+    <div class="cust-info-section">
+        <strong>Customer:</strong> <span id="displayName" class="dots">...................................................................</span><br>
+        <strong>Phone:</strong> <span id="displayPhone" class="dots">......................................................................</span><br>
+        <strong>Address:</strong> <span id="displayAddr" class="dots">....................................................................</span>
     </div>
 
     <table class="main-table">
@@ -102,70 +111,94 @@
                 <th width="40">SL</th>
                 <th width="320">Description</th>
                 <th width="50">Qty</th>
-                <th width="80">Rate (দর)</th>
-                <th width="90">Amount (টাকা)</th>
-                <th class="no-print" width="50">Action</th>
+                <th width="90">Rate</th>
+                <th width="100">Amount</th>
+                <th class="no-print" width="40">Action</th>
             </tr>
         </thead>
         <tbody id="billBody"></tbody>
         <tfoot>
-            <tr>
-                <td colspan="4" style="text-align: right; font-weight: bold;">Sub Total</td>
-                <td class="bold" id="subTotal">0.00</td>
-                <td class="no-print"></td>
-            </tr>
-            <tr>
-                <td colspan="4" style="text-align: right; font-weight: bold;">Paid / Advance</td>
-                <td id="displayPaid">0.00</td>
-                <td class="no-print"></td>
-            </tr>
-            <tr style="background: #f9f9f9;">
-                <td colspan="4" style="text-align: right; font-weight: bold;">Total Due</td>
-                <td class="bold" id="displayDue" style="color: red;">0.00</td>
-                <td class="no-print"></td>
-            </tr>
+            <tr><td colspan="4" align="right"><strong>Sub Total</strong></td><td id="subTotal">0.00</td><td class="no-print"></td></tr>
+            <tr><td colspan="4" align="right"><strong>Paid</strong></td><td id="displayPaid">0.00</td><td class="no-print"></td></tr>
+            <tr><td colspan="4" align="right"><strong style="color:red">Total Due</strong></td><td id="displayDue" style="color:red; font-weight:bold">0.00</td><td class="no-print"></td></tr>
         </tfoot>
     </table>
 
-    <div class="in-words">
-        <strong>In Words:</strong> <span id="wordsDisplay">Zero Taka Only</span>
+    <div style="margin-top: 50px; display: flex; justify-content: space-between;">
+        <div style="border-top: 1px solid #000; width: 170px; text-align: center; font-size: 12px; font-weight: bold;">Customer Signature</div>
+        <div style="border-top: 1px solid #000; width: 170px; text-align: center; font-size: 12px; font-weight: bold;">Authorized Signature</div>
     </div>
+</div>
 
-    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
-        <div style="border-top: 1px solid #000; width: 160px; text-align: center; font-size: 12px; font-weight: bold;">Customer Signature</div>
-        <div style="border-top: 1px solid #000; width: 160px; text-align: center; font-size: 12px; font-weight: bold;">Authorized Signature</div>
-    </div>
+<div class="history-container no-print">
+    <h4 style="margin-top:0">পূর্ববর্তী ইনভয়েস তালিকা (History)</h4>
+    <input type="text" id="searchInput" class="search-box" placeholder="নাম, ফোন বা ইনভয়েস নম্বর দিয়ে সার্চ করুন..." onkeyup="renderHistory()">
+    
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Inv No</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+    </table>
 </div>
 
 <script>
     let items = [];
     let gTotal = 0;
+    let editIndex = -1;
 
-    document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-GB');
-    document.getElementById('invNo').innerText = 'FCL-' + Math.floor(1000 + Math.random() * 9999);
+    window.onload = function() { resetInvoice(); renderHistory(); };
+
+    function getNextInvoiceNumber() {
+        let lastNum = localStorage.getItem('lastFclNum');
+        if (!lastNum) {
+            lastNum = 10001;
+        } else {
+            lastNum = parseInt(lastNum) + 1;
+        }
+        return lastNum;
+    }
+
+    function resetInvoice() {
+        document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-GB');
+        if(editIndex === -1) {
+            let nextNum = getNextInvoiceNumber();
+            document.getElementById('invNo').innerText = 'FCL-' + nextNum;
+        }
+        document.getElementById('displayName').innerText = '...................................................................';
+        document.getElementById('displayPhone').innerText = '......................................................................';
+        document.getElementById('displayAddr').innerText = '....................................................................';
+        document.getElementById('custName').value = '';
+        document.getElementById('custPhone').value = '';
+        document.getElementById('custAddr').value = '';
+        document.getElementById('paidInput').value = 0;
+        document.getElementById('saveBtn').innerText = "এন্ট্রি (Save)";
+        document.getElementById('panelTitle').innerText = "ফুজি কালার ল্যাব এন্ট্রি প্যানেল";
+        editIndex = -1;
+        items = [];
+        renderTable();
+    }
 
     function addItem() {
         const name = document.getElementById('itemName').value;
         const qty = parseFloat(document.getElementById('qty').value) || 0;
         const price = parseFloat(document.getElementById('price').value) || 0;
-        const fixedTotal = parseFloat(document.getElementById('fixedTotal').value) || 0;
-        
-        const cName = document.getElementById('custName').value;
-        const cPhone = document.getElementById('custPhone').value;
-        const cAddr = document.getElementById('custAddr').value;
+        const fixed = parseFloat(document.getElementById('fixedTotal').value) || 0;
 
-        if(!name) return alert("কাজের বিবরণ দিন");
+        if(!name) return alert("বিবরণ দিন");
 
-        if(cName) document.getElementById('displayName').innerText = cName;
-        if(cPhone) document.getElementById('displayPhone').innerText = cPhone;
-        if(cAddr) document.getElementById('displayAddr').innerText = cAddr;
+        document.getElementById('displayName').innerText = document.getElementById('custName').value || '.........................';
+        document.getElementById('displayPhone').innerText = document.getElementById('custPhone').value || '.........................';
+        document.getElementById('displayAddr').innerText = document.getElementById('custAddr').value || '.........................';
 
-        // যদি fixedTotal থাকে তবে সেটিই হবে টাকা, না থাকলে Qty * Rate হবে
-        let finalPrice = fixedTotal > 0 ? fixedTotal : (qty * price);
-        let displayRate = fixedTotal > 0 ? "-" : price;
-        let displayQty = fixedTotal > 0 ? "-" : qty;
-
-        items.push({ name, qty: displayQty, price: displayRate, total: finalPrice });
+        let total = fixed > 0 ? fixed : (qty * price);
+        items.push({ name, qty: fixed > 0 ? "-" : qty, price: fixed > 0 ? "-" : price, total });
         
         renderTable();
         document.getElementById('itemName').value = '';
@@ -181,21 +214,18 @@
 
     function renderTable() {
         const body = document.getElementById('billBody');
-        body.innerHTML = '';
-        gTotal = 0;
-
+        body.innerHTML = ''; gTotal = 0;
         items.forEach((item, index) => {
             gTotal += item.total;
             body.innerHTML += `<tr>
-                <td>${index + 1}</td>
+                <td>${index+1}</td>
                 <td class="text-left">${item.name}</td>
                 <td>${item.qty}</td>
                 <td>${item.price}</td>
                 <td>${item.total.toFixed(2)}</td>
-                <td class="no-print"><button class="delete-btn" onclick="deleteItem(${index})">X</button></td>
+                <td class="no-print"><button class="delete-icon" onclick="deleteItem(${index})">✖</button></td>
             </tr>`;
         });
-
         document.getElementById('subTotal').innerText = gTotal.toFixed(2);
         calculateSummary();
     }
@@ -203,33 +233,112 @@
     function calculateSummary() {
         const paid = parseFloat(document.getElementById('paidInput').value) || 0;
         const due = gTotal - paid;
-
         document.getElementById('displayPaid').innerText = paid.toFixed(2);
         document.getElementById('displayDue').innerText = due.toFixed(2);
-        document.getElementById('wordsDisplay').innerText = numberToWords(Math.round(gTotal)) + " Taka Only";
-
-        const seal = document.getElementById('paidSeal');
-        if (gTotal > 0 && paid >= gTotal) {
-            seal.style.display = 'block';
-        } else {
-            seal.style.display = 'none';
-        }
+        document.getElementById('paidSeal').style.display = (gTotal > 0 && paid >= gTotal) ? 'block' : 'none';
     }
 
-    function numberToWords(number) {
-        const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-        if (number === 0) return 'Zero';
-        let words = '';
-        if (number >= 1000) { words += numberToWords(Math.floor(number / 1000)) + ' Thousand '; number %= 1000; }
-        if (number >= 100) { words += numberToWords(Math.floor(number / 100)) + ' Hundred '; number %= 100; }
-        if (number > 0) {
-            if (number < 20) words += a[number];
-            else { words += b[Math.floor(number / 10)]; if (number % 10 > 0) words += '-' + a[number % 10]; }
+    function saveToHistory() {
+        if(items.length === 0) return alert("আইটেম নেই!");
+        
+        const currentInvNo = document.getElementById('invNo').innerText;
+        const inv = {
+            date: document.getElementById('invDate').innerText,
+            no: currentInvNo,
+            name: document.getElementById('custName').value,
+            phone: document.getElementById('custPhone').value,
+            addr: document.getElementById('custAddr').value,
+            items: [...items],
+            total: gTotal.toFixed(2),
+            paid: parseFloat(document.getElementById('paidInput').value || 0).toFixed(2),
+            due: (gTotal - parseFloat(document.getElementById('paidInput').value || 0)).toFixed(2)
+        };
+
+        let history = JSON.parse(localStorage.getItem('fujiHistory')) || [];
+
+        if(editIndex > -1) {
+            history[editIndex] = inv;
+            alert("ইনভয়েস আপডেট হয়েছে!");
+        } else {
+            history.unshift(inv);
+            let numOnly = currentInvNo.replace('FCL-', '');
+            localStorage.setItem('lastFclNum', numOnly);
+            alert("সেভ হয়েছে!");
         }
-        return words.trim();
+
+        localStorage.setItem('fujiHistory', JSON.stringify(history));
+        resetInvoice();
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const hBody = document.getElementById('historyBody');
+        const history = JSON.parse(localStorage.getItem('fujiHistory')) || [];
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        const filtered = history.filter(i => 
+            (i.name && i.name.toLowerCase().includes(searchTerm)) || 
+            (i.phone && i.phone.includes(searchTerm)) || 
+            (i.no && i.no.toLowerCase().includes(searchTerm))
+        );
+
+        hBody.innerHTML = filtered.map((i, index) => {
+            const originalIndex = history.findIndex(h => h.no === i.no);
+            return `<tr>
+                <td>${i.date}</td><td>${i.no}</td><td>${i.name || 'N/A'}</td><td>${i.total}</td>
+                <td>
+                    <button class="btn-view" onclick="viewInvoice(${originalIndex})">View</button>
+                    <button class="btn-edit" onclick="editInvoice(${originalIndex})">Edit</button>
+                    <button class="btn-del-hist" onclick="deleteHistoryItem(${originalIndex})">Delete</button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    function viewInvoice(index) {
+        const history = JSON.parse(localStorage.getItem('fujiHistory'));
+        const inv = history[index];
+        document.getElementById('invDate').innerText = inv.date;
+        document.getElementById('invNo').innerText = inv.no;
+        document.getElementById('displayName').innerText = inv.name || '.........................';
+        document.getElementById('displayPhone').innerText = inv.phone || '.........................';
+        document.getElementById('displayAddr').innerText = inv.addr || '.........................';
+        items = inv.items;
+        document.getElementById('displayPaid').innerText = inv.paid;
+        document.getElementById('displayDue').innerText = inv.due;
+        renderTable();
+        window.scrollTo(0, 0);
+    }
+
+    function editInvoice(index) {
+        const history = JSON.parse(localStorage.getItem('fujiHistory'));
+        const inv = history[index];
+        
+        document.getElementById('custName').value = inv.name || '';
+        document.getElementById('custPhone').value = inv.phone || '';
+        document.getElementById('custAddr').value = inv.addr || '';
+        document.getElementById('invNo').innerText = inv.no;
+        document.getElementById('invDate').innerText = inv.date;
+        document.getElementById('paidInput').value = inv.paid;
+        
+        items = [...inv.items];
+        editIndex = index;
+
+        document.getElementById('saveBtn').innerText = "Update Invoice";
+        document.getElementById('panelTitle').innerText = "এডিট মুড - ইনভয়েস আপডেট করুন";
+        
+        renderTable();
+        window.scrollTo(0, 0);
+    }
+
+    function deleteHistoryItem(index) {
+        if(confirm("মুছে ফেলবেন?")) {
+            let history = JSON.parse(localStorage.getItem('fujiHistory'));
+            history.splice(index, 1);
+            localStorage.setItem('fujiHistory', JSON.stringify(history));
+            renderHistory();
+        }
     }
 </script>
-
 </body>
 </html>
